@@ -13,6 +13,9 @@ import {
   ArrowRight,
   Award,
   Box,
+  Boxes,
+  Briefcase,
+  Camera,
   Check,
   CheckCircle,
   ChefHat,
@@ -21,14 +24,17 @@ import {
   DoorOpen,
   Eye,
   Facebook,
+  Flower2,
   Frame,
   Grid2x2,
   Hammer,
   HeartHandshake,
   Home,
+  ImageIcon,
   IndianRupee,
   Instagram,
   Layers,
+  Loader2,
   Mail,
   MapPin,
   Menu,
@@ -42,6 +48,7 @@ import {
   Shield,
   Sparkles,
   Star,
+  Upload,
   Wand2,
   X,
   Zap,
@@ -63,6 +70,40 @@ const NAV_LINKS = [
   { label: "About", href: "#about" },
   { label: "Calculator", href: "#calculator" },
   { label: "3D Visualizer", href: "#visualizer" },
+  { label: "360° Room Camera", href: "#room-camera" },
+  { label: "Contact", href: "#contact" },
+];
+
+type NavDropdownItem = { label: string; href: string };
+interface NavItem {
+  label: string;
+  href?: string;
+  dropdown?: NavDropdownItem[];
+}
+
+const NAV_STRUCTURE: NavItem[] = [
+  { label: "Home", href: "#home" },
+  {
+    label: "Services",
+    dropdown: [
+      { label: "Residential Interior", href: "#services" },
+      { label: "Modular Kitchen", href: "#services" },
+      { label: "Office Interior", href: "#services" },
+      { label: "False Ceiling", href: "#services" },
+      { label: "Wallpaper & Wall Panels", href: "#services" },
+      { label: "Commercial Interior", href: "#services" },
+    ],
+  },
+  { label: "Projects", href: "#projects" },
+  {
+    label: "Tools",
+    dropdown: [
+      { label: "Cost Calculator", href: "#calculator" },
+      { label: "3D Visualizer", href: "#visualizer" },
+      { label: "360° Room Camera", href: "#room-camera" },
+    ],
+  },
+  { label: "About", href: "#about" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -264,9 +305,41 @@ const FAQS = [
    NAVBAR
    ============================================================ */
 
+function DropdownMenu({
+  items,
+  onSelect,
+}: {
+  items: NavDropdownItem[];
+  onSelect: (href: string) => void;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -8, scale: 0.97 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -8, scale: 0.97 }}
+      transition={{ duration: 0.18, ease: "easeOut" }}
+      className="absolute top-full left-1/2 -translate-x-1/2 mt-2 min-w-[200px] bg-[oklch(0.14_0.008_60)] border border-gold/20 rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.6)] overflow-hidden z-50"
+    >
+      {items.map((item) => (
+        <button
+          key={`${item.label}-${item.href}`}
+          type="button"
+          onClick={() => onSelect(item.href)}
+          className="w-full text-left px-4 py-3 text-sm text-foreground/80 hover:text-gold hover:bg-gold/8 transition-all duration-150 border-b border-border/30 last:border-0 font-medium"
+        >
+          {item.label}
+        </button>
+      ))}
+    </motion.div>
+  );
+}
+
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
+  const navRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 60);
@@ -274,10 +347,34 @@ function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setOpenDropdown(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const scrollTo = (href: string) => {
     setMenuOpen(false);
+    setOpenDropdown(null);
     const id = href.replace("#", "");
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleDesktopHover = (label: string, hasDropdown: boolean) => {
+    if (hasDropdown) setOpenDropdown(label);
+  };
+
+  const handleDesktopLeave = () => {
+    setOpenDropdown(null);
+  };
+
+  const toggleMobileSection = (label: string) => {
+    setMobileExpanded((prev) => (prev === label ? null : label));
   };
 
   return (
@@ -291,39 +388,83 @@ function Navbar() {
         style={{ transform: "translateZ(0)" }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
+          <div className="flex items-center justify-between h-20" ref={navRef}>
             {/* Logo */}
             <button
               type="button"
               onClick={() => scrollTo("#home")}
               className="flex items-center gap-2 focus:outline-none group"
             >
-              <img
-                src="/assets/generated/kdi-logo-v2-transparent.dim_500x160.png"
-                alt="KDI Interior"
-                className="h-14 w-auto object-contain"
-                style={{
-                  filter:
-                    "drop-shadow(0 2px 8px rgba(0,0,0,0.7)) brightness(1.05)",
-                }}
-              />
+              <div className="flex items-center gap-1">
+                <span className="font-display text-2xl sm:text-3xl font-bold text-gold tracking-wider">
+                  KDI
+                </span>
+                <div className="flex flex-col ml-1 hidden sm:flex">
+                  <span className="text-[10px] font-semibold text-foreground/70 tracking-[0.2em] uppercase leading-none">
+                    Interior
+                  </span>
+                  <span className="text-[10px] font-semibold text-foreground/70 tracking-[0.2em] uppercase leading-none mt-0.5">
+                    &amp; Studio
+                  </span>
+                </div>
+              </div>
+              <div className="w-px h-8 bg-gold/30 mx-1 hidden sm:block" />
+              <span className="text-[10px] text-gold/60 font-semibold tracking-[0.15em] uppercase hidden sm:block">
+                Delhi NCR
+              </span>
             </button>
 
             {/* Desktop nav */}
-            <nav className="hidden md:flex items-center gap-8">
-              {NAV_LINKS.map((link) => (
-                <button
-                  type="button"
-                  key={link.href}
-                  onClick={() => scrollTo(link.href)}
-                  className="text-sm font-medium tracking-wide text-foreground/80 hover:text-gold transition-colors duration-200 uppercase"
+            <nav className="hidden md:flex items-center gap-1">
+              {NAV_STRUCTURE.map((item) => (
+                <div
+                  key={item.label}
+                  className="relative"
+                  onMouseEnter={() =>
+                    handleDesktopHover(item.label, !!item.dropdown)
+                  }
+                  onMouseLeave={handleDesktopLeave}
                 >
-                  {link.label}
-                </button>
+                  {item.dropdown ? (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setOpenDropdown(
+                          openDropdown === item.label ? null : item.label,
+                        )
+                      }
+                      className={`flex items-center gap-1 px-3 py-2 text-sm font-medium tracking-wide transition-colors duration-200 uppercase rounded-lg ${
+                        openDropdown === item.label
+                          ? "text-gold bg-gold/8"
+                          : "text-foreground/80 hover:text-gold hover:bg-gold/5"
+                      }`}
+                    >
+                      {item.label}
+                      <ChevronRight
+                        size={13}
+                        className={`transition-transform duration-200 ${openDropdown === item.label ? "rotate-90 text-gold" : "rotate-0"}`}
+                      />
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => scrollTo(item.href!)}
+                      className="px-3 py-2 text-sm font-medium tracking-wide text-foreground/80 hover:text-gold hover:bg-gold/5 transition-colors duration-200 uppercase rounded-lg"
+                    >
+                      {item.label}
+                    </button>
+                  )}
+
+                  <AnimatePresence>
+                    {item.dropdown && openDropdown === item.label && (
+                      <DropdownMenu items={item.dropdown} onSelect={scrollTo} />
+                    )}
+                  </AnimatePresence>
+                </div>
               ))}
               <a
                 href="tel:8588830091"
-                className="flex items-center gap-2 bg-gold text-charcoal px-4 py-2 rounded text-sm font-bold tracking-wide hover:bg-gold-light transition-colors duration-200"
+                className="flex items-center gap-2 bg-gold text-charcoal px-4 py-2 rounded text-sm font-bold tracking-wide hover:bg-gold-light transition-colors duration-200 whitespace-nowrap ml-3"
               >
                 <Phone size={14} />
                 8588830091
@@ -351,22 +492,61 @@ function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="fixed top-20 left-0 right-0 z-40 bg-[oklch(0.12_0.005_60/0.99)] border-b border-gold/20 shadow-2xl md:hidden"
+            className="fixed top-20 left-0 right-0 z-40 bg-[oklch(0.12_0.005_60/0.99)] border-b border-gold/20 shadow-2xl md:hidden overflow-y-auto max-h-[80vh]"
           >
-            <nav className="flex flex-col p-6 gap-4">
-              {NAV_LINKS.map((link) => (
-                <button
-                  type="button"
-                  key={link.href}
-                  onClick={() => scrollTo(link.href)}
-                  className="text-left text-foreground/90 hover:text-gold py-3 border-b border-border/50 transition-colors text-lg font-medium"
-                >
-                  {link.label}
-                </button>
+            <nav className="flex flex-col p-4 gap-1">
+              {NAV_STRUCTURE.map((item) => (
+                <div key={item.label}>
+                  {item.dropdown ? (
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() => toggleMobileSection(item.label)}
+                        className="w-full flex items-center justify-between text-foreground/90 hover:text-gold py-3 px-2 border-b border-border/30 transition-colors text-base font-semibold"
+                      >
+                        {item.label}
+                        <ChevronRight
+                          size={16}
+                          className={`transition-transform duration-200 ${mobileExpanded === item.label ? "rotate-90 text-gold" : ""}`}
+                        />
+                      </button>
+                      <AnimatePresence>
+                        {mobileExpanded === item.label && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="overflow-hidden"
+                          >
+                            {item.dropdown.map((sub) => (
+                              <button
+                                key={sub.label}
+                                type="button"
+                                onClick={() => scrollTo(sub.href)}
+                                className="w-full text-left text-foreground/70 hover:text-gold py-2.5 pl-6 pr-2 text-sm transition-colors border-b border-border/20 last:border-0"
+                              >
+                                {sub.label}
+                              </button>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => scrollTo(item.href!)}
+                      className="w-full text-left text-foreground/90 hover:text-gold py-3 px-2 border-b border-border/30 transition-colors text-base font-semibold"
+                    >
+                      {item.label}
+                    </button>
+                  )}
+                </div>
               ))}
               <a
                 href="tel:8588830091"
-                className="flex items-center justify-center gap-2 bg-gold text-charcoal px-4 py-3 rounded font-bold text-base mt-2"
+                className="flex items-center justify-center gap-2 bg-gold text-charcoal px-4 py-3 rounded font-bold text-base mt-3"
               >
                 <Phone size={16} />
                 Call: 8588830091
@@ -467,10 +647,11 @@ function Hero() {
           >
             <a
               href="tel:8588830091"
-              className="flex items-center gap-2 bg-gold text-charcoal px-8 py-4 rounded font-bold text-base tracking-wide hover:bg-gold-light transition-all duration-300 shadow-gold hover:shadow-gold-lg hover:-translate-y-0.5"
+              className="flex items-center gap-2 bg-gold text-charcoal px-6 sm:px-8 py-4 rounded font-bold text-sm sm:text-base tracking-wide hover:bg-gold-light transition-all duration-300 shadow-gold hover:shadow-gold-lg hover:-translate-y-0.5"
             >
               <Phone size={18} />
-              Call Now: 8588830091
+              <span className="sm:hidden">Call Now</span>
+              <span className="hidden sm:inline">Call: 8588830091</span>
             </a>
             <button
               type="button"
@@ -508,21 +689,142 @@ function Hero() {
           </motion.div>
         </motion.div>
       </div>
+    </section>
+  );
+}
 
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-gold/50"
-      >
-        <span className="text-xs uppercase tracking-widest">Scroll</span>
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ repeat: Number.POSITIVE_INFINITY, duration: 1.8 }}
-          className="w-0.5 h-8 bg-gradient-to-b from-gold/50 to-transparent"
-        />
-      </motion.div>
+/* ============================================================
+   INTRODUCTION
+   ============================================================ */
+
+function Introduction() {
+  const scrollTo = (id: string) =>
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+
+  const containerVariants: Variants = {
+    hidden: {},
+    show: {
+      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+    },
+  };
+
+  const cardVariant: Variants = {
+    hidden: { opacity: 0, y: 30 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] },
+    },
+  };
+
+  return (
+    <section
+      id="introduction"
+      className="py-16 lg:py-24 bg-charcoal relative overflow-hidden"
+    >
+      {/* Decorative background radial */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(0.78_0.12_75/0.05)_0%,transparent_70%)]" />
+
+      {/* Top gold divider */}
+      <div className="w-full h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent mb-0" />
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          {/* Left: Text content */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.7 }}
+          >
+            {/* Eyebrow */}
+            <span className="inline-flex items-center gap-2 text-gold text-xs font-bold tracking-[0.3em] uppercase mb-4">
+              <span className="w-5 h-px bg-gold inline-block" />
+              Who We Are
+              <span className="w-5 h-px bg-gold inline-block" />
+            </span>
+
+            {/* Heading */}
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground leading-tight mb-5">
+              Crafting Spaces That{" "}
+              <span className="text-gradient-gold">Tell Your Story</span>
+            </h2>
+            <div className="section-divider mb-6" />
+
+            {/* Body text */}
+            <p className="text-muted-foreground leading-relaxed text-base mb-8">
+              KDI Interior &amp; Studio is Delhi NCR's trusted interior design
+              partner. Since 2017, we have transformed over 500 homes, offices,
+              and commercial spaces into environments that are beautiful,
+              functional, and uniquely yours. From modular kitchens to full home
+              interiors, we bring your vision to life — on time and within
+              budget.
+            </p>
+
+            {/* CTA */}
+            <button
+              type="button"
+              onClick={() => scrollTo("services")}
+              className="inline-flex items-center gap-2 bg-gold text-charcoal px-7 py-3.5 rounded font-bold text-sm tracking-wide hover:bg-gold-light transition-all duration-300 shadow-gold hover:shadow-gold-lg hover:-translate-y-0.5"
+            >
+              Explore Our Services
+              <ChevronRight size={16} />
+            </button>
+          </motion.div>
+
+          {/* Right: Animated stat cards */}
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            className="grid grid-cols-1 gap-5"
+          >
+            {[
+              {
+                value: "Since 2017",
+                label: "Serving Delhi NCR",
+                icon: "🏙️",
+                desc: "Years of design excellence in the capital region",
+              },
+              {
+                value: "500+",
+                label: "Projects Completed",
+                icon: "🏆",
+                desc: "From cozy 1BHKs to luxury villas and corporate offices",
+              },
+              {
+                value: "100%",
+                label: "Client Satisfaction",
+                icon: "⭐",
+                desc: "Every project delivered on time and within the agreed budget",
+              },
+            ].map((stat) => (
+              <motion.div
+                key={stat.value}
+                variants={cardVariant}
+                whileHover={{ x: 6, transition: { duration: 0.2 } }}
+                className="group flex items-start gap-5 bg-card border border-border hover:border-gold/30 rounded-xl p-5 transition-all duration-300 hover:shadow-[0_4px_24px_oklch(0_0_0/0.3)]"
+              >
+                <div className="text-3xl flex-shrink-0 w-12 h-12 flex items-center justify-center bg-gold/10 rounded-lg">
+                  {stat.icon}
+                </div>
+                <div>
+                  <p className="font-display text-2xl font-bold text-gold leading-none mb-1">
+                    {stat.value}
+                  </p>
+                  <p className="text-foreground font-semibold text-sm mb-1">
+                    {stat.label}
+                  </p>
+                  <p className="text-muted-foreground text-xs leading-relaxed">
+                    {stat.desc}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </div>
     </section>
   );
 }
@@ -1403,17 +1705,21 @@ function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="col-span-1 sm:col-span-2 lg:col-span-1">
-            <img
-              src="/assets/generated/kdi-logo-v2-transparent.dim_500x160.png"
-              alt="KDI Interior"
-              className="h-14 w-auto object-contain mb-4"
-              style={{
-                filter:
-                  "drop-shadow(0 2px 8px rgba(0,0,0,0.7)) brightness(1.05)",
-              }}
-            />
+            <div className="flex items-center gap-1 mb-4">
+              <span className="font-display text-2xl font-bold text-gold tracking-wider">
+                KDI
+              </span>
+              <div className="flex flex-col ml-1">
+                <span className="text-[9px] font-semibold text-foreground/60 tracking-[0.2em] uppercase leading-none">
+                  Interior
+                </span>
+                <span className="text-[9px] font-semibold text-foreground/60 tracking-[0.2em] uppercase leading-none mt-0.5">
+                  &amp; Studio
+                </span>
+              </div>
+            </div>
             <p className="text-muted-foreground text-sm leading-relaxed mb-5">
-              Premium interior design studio serving Delhi NCR since 2014.
+              Premium interior design studio serving Delhi NCR since 2017.
               Transforming spaces into masterpieces.
             </p>
             {/* Social */}
@@ -3971,6 +4277,2050 @@ function RoomVisualizer() {
 }
 
 /* ============================================================
+   ROOM CAMERA 360 — TYPES & DATA
+   ============================================================ */
+
+type RoomCamera360Type =
+  | "Bedroom"
+  | "Kitchen"
+  | "Living Room"
+  | "Washroom"
+  | "Kids Room"
+  | "Study Room";
+
+interface RoomCameraFurnitureItem {
+  id: string;
+  label: string;
+}
+
+interface RoomCameraConfig {
+  emoji: string;
+  items: RoomCameraFurnitureItem[];
+  avgLow: number;
+  avgHigh: number;
+}
+
+const ROOM_CAMERA_CONFIG: Record<RoomCamera360Type, RoomCameraConfig> = {
+  Bedroom: {
+    emoji: "🛏️",
+    items: [
+      { id: "bed", label: "Bed" },
+      { id: "side-table", label: "Side Table" },
+      { id: "wardrobe", label: "Wardrobe" },
+      { id: "dressing-table", label: "Dressing Table" },
+      { id: "study-desk", label: "Study Desk" },
+      { id: "tv-unit", label: "TV Unit" },
+      { id: "curtains", label: "Curtains" },
+      { id: "lighting", label: "Lighting" },
+    ],
+    avgLow: 25000,
+    avgHigh: 45000,
+  },
+  Kitchen: {
+    emoji: "🍳",
+    items: [
+      { id: "modular-cabinets", label: "Modular Cabinets" },
+      { id: "countertop", label: "Countertop" },
+      { id: "island", label: "Island / Breakfast Bar" },
+      { id: "chimney", label: "Chimney / Hood" },
+      { id: "backsplash", label: "Backsplash" },
+      { id: "sink-faucet", label: "Sink & Faucet" },
+      { id: "microwave-unit", label: "Microwave Unit" },
+      { id: "pantry", label: "Pantry" },
+    ],
+    avgLow: 30000,
+    avgHigh: 80000,
+  },
+  "Living Room": {
+    emoji: "🛋️",
+    items: [
+      { id: "sofa-set", label: "Sofa Set" },
+      { id: "tv-unit", label: "TV Unit" },
+      { id: "coffee-table", label: "Coffee Table" },
+      { id: "display-unit", label: "Display Unit" },
+      { id: "false-ceiling", label: "False Ceiling" },
+      { id: "feature-wall", label: "Feature Wall" },
+      { id: "curtains-blinds", label: "Curtains / Blinds" },
+      { id: "lighting", label: "Lighting" },
+    ],
+    avgLow: 20000,
+    avgHigh: 50000,
+  },
+  Washroom: {
+    emoji: "🚿",
+    items: [
+      { id: "vanity-basin", label: "Vanity & Basin" },
+      { id: "shower-area", label: "Shower Area" },
+      { id: "bathtub", label: "Bathtub" },
+      { id: "toilet", label: "Toilet" },
+      { id: "mirror-cabinet", label: "Mirror Cabinet" },
+      { id: "accessories", label: "Accessories & Hooks" },
+      { id: "tiles-flooring", label: "Tiles & Flooring" },
+      { id: "exhaust-lighting", label: "Exhaust & Lighting" },
+    ],
+    avgLow: 15000,
+    avgHigh: 35000,
+  },
+  "Kids Room": {
+    emoji: "👶",
+    items: [
+      { id: "kids-bed", label: "Kids Bed" },
+      { id: "study-table", label: "Study Table & Chair" },
+      { id: "storage-shelves", label: "Storage & Shelves" },
+      { id: "wardrobe", label: "Wardrobe" },
+      { id: "play-area", label: "Play Area" },
+      { id: "activity-wall", label: "Blackboard / Activity Wall" },
+      { id: "lighting", label: "Lighting" },
+      { id: "themed-decor", label: "Themed Decor" },
+    ],
+    avgLow: 12000,
+    avgHigh: 25000,
+  },
+  "Study Room": {
+    emoji: "📚",
+    items: [
+      { id: "bookshelf", label: "Bookshelf & Library" },
+      { id: "study-desk", label: "Study Desk" },
+      { id: "ergonomic-chair", label: "Ergonomic Chair" },
+      { id: "storage-cabinets", label: "Storage Cabinets" },
+      { id: "lighting", label: "Lighting" },
+      { id: "whiteboard", label: "Whiteboard / Pinboard" },
+      { id: "computer-setup", label: "Computer Setup" },
+      { id: "reading-corner", label: "Reading Corner" },
+    ],
+    avgLow: 10000,
+    avgHigh: 30000,
+  },
+};
+
+const ROOM_CAMERA_ITEM_NOTES: Record<string, string> = {
+  bed: "Upholstered platform bed with premium finish and storage underneath",
+  "side-table": "Floating or freestanding nightstand with soft-close drawer",
+  wardrobe: "Sliding door wardrobe with internal organiser and LED lighting",
+  "dressing-table": "Vanity mirror unit with integrated drawer storage",
+  "study-desk": "Wall-mounted or freestanding desk with cable management",
+  "tv-unit": "Wall-hung TV panel with hidden wire management",
+  curtains: "Motorised blackout curtains with sheer layer on track",
+  lighting: "Recessed LED cove + pendant lights for layered ambience",
+  "modular-cabinets":
+    "Full-height modular cabinets with soft-close Hettich hardware",
+  countertop: "Quartz or granite slab with waterfall edge option",
+  island: "Island/breakfast bar with bar stools — optional addition",
+  chimney: "90cm auto-clean chimney with 1200 m³/hr suction",
+  backsplash: "Designer tiles or glass mosaic backsplash behind hob",
+  "sink-faucet": "Undermount SS sink with single-lever premium faucet",
+  "microwave-unit": "Dedicated microwave niche with ventilation cut-out",
+  pantry: "Tall pull-out pantry unit for dry storage",
+  "sofa-set": "L-shape or 3+2 sofa set with premium upholstery",
+  "coffee-table": "Centre table with storage — marble top or glass",
+  "display-unit": "Crockery / display unit with backlit shelves",
+  "false-ceiling": "Gyproc false ceiling with LED cove lighting",
+  "feature-wall": "Textured wallpaper, veneer panel, or stone cladding",
+  "curtains-blinds": "Dual-layer curtains or motorised roller blinds",
+  "vanity-basin": "Vanity cabinet with under-counter wash basin",
+  "shower-area": "Frameless glass shower enclosure with rain shower head",
+  bathtub: "Freestanding acrylic bathtub with floor-mounted filler",
+  toilet: "Wall-hung EWC with concealed cistern and bidet",
+  "mirror-cabinet": "Backlit mirror with built-in medicine cabinet",
+  accessories: "Towel ladder, robe hooks, toilet roll holder in SS/chrome",
+  "tiles-flooring": "Anti-skid porcelain tiles with waterproofing membrane",
+  "exhaust-lighting": "Exhaust fan with auto sensor + LED strip lighting",
+  "kids-bed": "Low bunk or single bed with safety rails and storage",
+  "study-table": "Height-adjustable study table with ergonomic chair",
+  "storage-shelves": "Colourful wall shelves with baskets and bins",
+  "play-area": "Soft-play mat zone with storage for toys",
+  "activity-wall": "Chalkboard paint wall or magnetic whiteboard panel",
+  "themed-decor": "Room theme decals, wall murals, and personalised elements",
+  bookshelf: "Floor-to-ceiling bookshelf with integrated ladder",
+  "ergonomic-chair": "Mesh-back ergonomic chair with lumbar support",
+  "storage-cabinets": "Lateral filing cabinets or modular storage wall",
+  whiteboard: "Whiteboard or cork pinboard for notes and planning",
+  "computer-setup": "Monitor arm, cable management, and task lighting",
+  "reading-corner": "Cosy reading nook with armchair and floor lamp",
+};
+
+const ROOM_CAMERA_TYPES: RoomCamera360Type[] = [
+  "Bedroom",
+  "Kitchen",
+  "Living Room",
+  "Washroom",
+  "Kids Room",
+  "Study Room",
+];
+
+/* ============================================================
+   AI 3D DESIGN — THEME DATA & CANVAS LOGIC
+   ============================================================ */
+
+interface DesignTheme3D {
+  id: string;
+  name: string;
+  styleTag: string;
+  minRate: number;
+  maxRate: number;
+  icon: React.ReactNode;
+  palette: {
+    walls: string;
+    floor: string;
+    ceiling: string;
+    accent: string;
+  };
+  products: {
+    paint: { brand: string; shade: string; pricePerLitre: number };
+    flooring: { brand: string; type: string; pricePerSqft: number };
+    ceiling: { brand: string; pricePerSqft: number };
+    hardware: { brand: string; grade: string };
+    fabric?: { type: string; price: string };
+  };
+}
+
+const DESIGN_THEMES_3D: DesignTheme3D[] = [
+  {
+    id: "modern-minimalist",
+    name: "Modern Minimalist",
+    styleTag: "Clean Lines · Whites & Greys",
+    minRate: 950,
+    maxRate: 1200,
+    icon: <Boxes size={20} />,
+    palette: {
+      walls: "#F5F5F0",
+      floor: "#D4C5B2",
+      ceiling: "#FAFAFA",
+      accent: "#1A1A2E",
+    },
+    products: {
+      paint: {
+        brand: "Asian Paints Royale",
+        shade: "Arctic White",
+        pricePerLitre: 420,
+      },
+      flooring: {
+        brand: "Pergo",
+        type: "Light Oak Laminate",
+        pricePerSqft: 95,
+      },
+      ceiling: { brand: "Saint-Gobain Gyproc", pricePerSqft: 120 },
+      hardware: { brand: "Hettich", grade: "Premium" },
+      fabric: { type: "Linen curtains off-white", price: "₹180/m" },
+    },
+  },
+  {
+    id: "luxury-classic",
+    name: "Luxury Classic",
+    styleTag: "Rich Tones · Ornate Detailing",
+    minRate: 1400,
+    maxRate: 1800,
+    icon: <Award size={20} />,
+    palette: {
+      walls: "#F0E8D8",
+      floor: "#8B6914",
+      ceiling: "#FAF0E6",
+      accent: "#8B0000",
+    },
+    products: {
+      paint: {
+        brand: "Berger Silk",
+        shade: "Champagne Gold",
+        pricePerLitre: 550,
+      },
+      flooring: {
+        brand: "Italian Marble",
+        type: "Botticino Classic",
+        pricePerSqft: 250,
+      },
+      ceiling: { brand: "Saint-Gobain Gyptone", pricePerSqft: 180 },
+      hardware: { brand: "Hafele", grade: "Luxury Gold" },
+      fabric: { type: "Velvet drapes burgundy", price: "₹450/m" },
+    },
+  },
+  {
+    id: "scandinavian",
+    name: "Scandinavian",
+    styleTag: "Warm Woods · Neutral Tones",
+    minRate: 800,
+    maxRate: 1050,
+    icon: <Flower2 size={20} />,
+    palette: {
+      walls: "#FFFEF9",
+      floor: "#C8A882",
+      ceiling: "#FFFFFF",
+      accent: "#4A7C59",
+    },
+    products: {
+      paint: {
+        brand: "Berger Easy Clean",
+        shade: "Nordic White",
+        pricePerLitre: 380,
+      },
+      flooring: {
+        brand: "Quick-Step",
+        type: "Warm Birch Laminate",
+        pricePerSqft: 110,
+      },
+      ceiling: { brand: "Saint-Gobain Gyproc", pricePerSqft: 100 },
+      hardware: { brand: "Hettich", grade: "Matt Finish" },
+      fabric: { type: "Muslin natural linen", price: "₹150/m" },
+    },
+  },
+  {
+    id: "industrial-chic",
+    name: "Industrial Chic",
+    styleTag: "Exposed Brick · Metal Accents",
+    minRate: 700,
+    maxRate: 950,
+    icon: <Hammer size={20} />,
+    palette: {
+      walls: "#8B7355",
+      floor: "#5C5C5C",
+      ceiling: "#3D3D3D",
+      accent: "#B87333",
+    },
+    products: {
+      paint: {
+        brand: "Asian Paints Royale",
+        shade: "Brick Dust",
+        pricePerLitre: 390,
+      },
+      flooring: {
+        brand: "Kajaria",
+        type: "Grey Concrete Tile",
+        pricePerSqft: 75,
+      },
+      ceiling: { brand: "Gyproc Exposed Grid", pricePerSqft: 90 },
+      hardware: { brand: "Ebco", grade: "Industrial Chrome" },
+      fabric: { type: "Canvas gunmetal grey", price: "₹200/m" },
+    },
+  },
+  {
+    id: "bohemian",
+    name: "Bohemian",
+    styleTag: "Eclectic · Earthy Tones",
+    minRate: 600,
+    maxRate: 850,
+    icon: <Flower2 size={20} />,
+    palette: {
+      walls: "#D4956A",
+      floor: "#8B6914",
+      ceiling: "#F5DEB3",
+      accent: "#6B3A8B",
+    },
+    products: {
+      paint: {
+        brand: "Berger Texture",
+        shade: "Terracotta Bliss",
+        pricePerLitre: 440,
+      },
+      flooring: {
+        brand: "Nitco",
+        type: "Handcrafted Rustic Tile",
+        pricePerSqft: 65,
+      },
+      ceiling: { brand: "Gyproc POP", pricePerSqft: 85 },
+      hardware: { brand: "Hettich", grade: "Antique Bronze" },
+      fabric: { type: "Macramé & cotton prints", price: "₹220/m" },
+    },
+  },
+  {
+    id: "contemporary",
+    name: "Contemporary",
+    styleTag: "Bold Accents · Mixed Materials",
+    minRate: 1100,
+    maxRate: 1400,
+    icon: <Briefcase size={20} />,
+    palette: {
+      walls: "#E8E8F0",
+      floor: "#2C2C54",
+      ceiling: "#F8F8FF",
+      accent: "#FF6B6B",
+    },
+    products: {
+      paint: {
+        brand: "Asian Paints Royale",
+        shade: "Cool Grey Mist",
+        pricePerLitre: 460,
+      },
+      flooring: {
+        brand: "Somany",
+        type: "Polished Dark Vitrified",
+        pricePerSqft: 130,
+      },
+      ceiling: { brand: "Saint-Gobain Smart", pricePerSqft: 140 },
+      hardware: { brand: "Hafele", grade: "Matt Black" },
+      fabric: { type: "Geometric blockout blinds", price: "₹300/m" },
+    },
+  },
+];
+
+const ROOM_SQFT_ESTIMATE: Record<RoomCamera360Type, number> = {
+  Bedroom: 200,
+  Kitchen: 150,
+  "Living Room": 300,
+  Washroom: 80,
+  "Kids Room": 180,
+  "Study Room": 160,
+};
+
+/* Canvas 3D Room Drawing */
+function draw3DRoom(
+  canvas: HTMLCanvasElement,
+  theme: DesignTheme3D,
+  roomType: RoomCamera360Type,
+  selectedItems: string[],
+  _roomConfig: RoomCameraConfig,
+) {
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+
+  const W = canvas.width;
+  const H = canvas.height;
+  const { walls, floor, ceiling, accent } = theme.palette;
+
+  // Vanishing point at center-top area
+  const vx = W / 2;
+  const _vy = H * 0.3;
+
+  // Helper: fill polygon
+  const fillPoly = (points: [number, number][], color: string) => {
+    ctx.beginPath();
+    ctx.moveTo(points[0][0], points[0][1]);
+    for (let i = 1; i < points.length; i++)
+      ctx.lineTo(points[i][0], points[i][1]);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+  };
+
+  ctx.clearRect(0, 0, W, H);
+
+  // 1. Ceiling background
+  ctx.fillStyle = ceiling;
+  ctx.fillRect(0, 0, W, H);
+
+  // 2. Back wall (center trapezoid)
+  const backLeft = W * 0.28;
+  const backRight = W * 0.72;
+  const backTop = H * 0.12;
+  const backBottom = H * 0.68;
+  fillPoly(
+    [
+      [backLeft, backTop],
+      [backRight, backTop],
+      [backRight, backBottom],
+      [backLeft, backBottom],
+    ],
+    walls,
+  );
+
+  // 3. Left wall
+  fillPoly(
+    [
+      [0, 0],
+      [backLeft, backTop],
+      [backLeft, backBottom],
+      [0, H],
+    ],
+    shadeColor(walls, -15),
+  );
+
+  // 4. Right wall
+  fillPoly(
+    [
+      [backRight, backTop],
+      [W, 0],
+      [W, H],
+      [backRight, backBottom],
+    ],
+    shadeColor(walls, -10),
+  );
+
+  // 5. Floor
+  const floorGrad = ctx.createLinearGradient(0, backBottom, 0, H);
+  floorGrad.addColorStop(0, shadeColor(floor, 10));
+  floorGrad.addColorStop(1, shadeColor(floor, -5));
+  fillPoly(
+    [
+      [0, H],
+      [backLeft, backBottom],
+      [backRight, backBottom],
+      [W, H],
+    ],
+    floor,
+  );
+  fillPoly(
+    [
+      [0, H],
+      [backLeft, backBottom],
+      [backRight, backBottom],
+      [W, H],
+    ],
+    "rgba(255,255,255,0.06)",
+  );
+
+  // 6. Floor-wall junction lines
+  ctx.strokeStyle = shadeColor(walls, -30);
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(0, H);
+  ctx.lineTo(backLeft, backBottom);
+  ctx.lineTo(backRight, backBottom);
+  ctx.lineTo(W, H);
+  ctx.stroke();
+
+  // Ceiling-wall junction
+  ctx.strokeStyle = shadeColor(ceiling, -20);
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(backLeft, backTop);
+  ctx.lineTo(backRight, backTop);
+  ctx.lineTo(W, 0);
+  ctx.stroke();
+
+  // 7. Furniture silhouettes based on selected items & room
+  const accentWith = (alpha: number) => hexWithAlpha(accent, alpha);
+
+  const roomEmojiFurniture = () => {
+    const hasItem = (id: string) => selectedItems.includes(id);
+    const bw = backRight - backLeft;
+    const bh = backBottom - backTop;
+
+    if (roomType === "Bedroom") {
+      // Bed
+      if (hasItem("bed") || selectedItems.length === 0) {
+        ctx.fillStyle = accentWith(0.55);
+        ctx.beginPath();
+        ctx.roundRect(
+          backLeft + bw * 0.15,
+          backTop + bh * 0.42,
+          bw * 0.7,
+          bh * 0.45,
+          4,
+        );
+        ctx.fill();
+        // Headboard
+        ctx.fillStyle = accentWith(0.7);
+        ctx.beginPath();
+        ctx.roundRect(
+          backLeft + bw * 0.15,
+          backTop + bh * 0.3,
+          bw * 0.7,
+          bh * 0.14,
+          4,
+        );
+        ctx.fill();
+        // Pillows
+        ctx.fillStyle = "rgba(255,255,255,0.18)";
+        ctx.beginPath();
+        ctx.roundRect(
+          backLeft + bw * 0.22,
+          backTop + bh * 0.44,
+          bw * 0.2,
+          bh * 0.12,
+          6,
+        );
+        ctx.fill();
+        ctx.beginPath();
+        ctx.roundRect(
+          backLeft + bw * 0.56,
+          backTop + bh * 0.44,
+          bw * 0.2,
+          bh * 0.12,
+          6,
+        );
+        ctx.fill();
+      }
+      // Wardrobe on right
+      if (hasItem("wardrobe")) {
+        ctx.fillStyle = accentWith(0.4);
+        ctx.fillRect(
+          backRight - bw * 0.18,
+          backTop + bh * 0.05,
+          bw * 0.16,
+          bh * 0.7,
+        );
+        ctx.fillStyle = "rgba(255,255,255,0.06)";
+        ctx.fillRect(
+          backRight - bw * 0.18,
+          backTop + bh * 0.05,
+          bw * 0.07,
+          bh * 0.7,
+        );
+      }
+      // Side table
+      if (hasItem("side-table")) {
+        ctx.fillStyle = accentWith(0.45);
+        ctx.fillRect(
+          backLeft + bw * 0.02,
+          backBottom - bh * 0.3,
+          bw * 0.12,
+          bh * 0.25,
+        );
+      }
+      // TV unit on left wall
+      if (hasItem("tv-unit")) {
+        ctx.fillStyle = accentWith(0.35);
+        ctx.fillRect(
+          backLeft - bw * 0.12,
+          backBottom - bh * 0.35,
+          bw * 0.12,
+          bh * 0.15,
+        );
+        // TV screen
+        ctx.fillStyle = "rgba(20,20,40,0.7)";
+        ctx.fillRect(
+          backLeft - bw * 0.1,
+          backBottom - bh * 0.6,
+          bw * 0.08,
+          bh * 0.22,
+        );
+      }
+    } else if (roomType === "Kitchen") {
+      // Counter bottom
+      ctx.fillStyle = accentWith(0.5);
+      ctx.fillRect(backLeft, backBottom - bh * 0.22, bw, bh * 0.22);
+      // Counter top surface
+      ctx.fillStyle = "rgba(255,255,255,0.12)";
+      ctx.fillRect(backLeft, backBottom - bh * 0.24, bw, bh * 0.03);
+      // Upper cabinets
+      if (hasItem("modular-cabinets")) {
+        ctx.fillStyle = accentWith(0.45);
+        ctx.fillRect(backLeft, backTop + bh * 0.05, bw * 0.7, bh * 0.22);
+        // Cabinet lines
+        ctx.strokeStyle = "rgba(255,255,255,0.08)";
+        ctx.lineWidth = 1;
+        for (let i = 1; i < 4; i++) {
+          ctx.beginPath();
+          ctx.moveTo(backLeft + (bw * 0.7 * i) / 4, backTop + bh * 0.05);
+          ctx.lineTo(backLeft + (bw * 0.7 * i) / 4, backTop + bh * 0.27);
+          ctx.stroke();
+        }
+      }
+      // Chimney
+      if (hasItem("chimney")) {
+        ctx.fillStyle = accentWith(0.6);
+        ctx.fillRect(
+          backLeft + bw * 0.35,
+          backTop + bh * 0.05,
+          bw * 0.15,
+          bh * 0.38,
+        );
+      }
+    } else if (roomType === "Living Room") {
+      // Sofa
+      ctx.fillStyle = accentWith(0.55);
+      ctx.beginPath();
+      ctx.roundRect(
+        backLeft + bw * 0.05,
+        backTop + bh * 0.5,
+        bw * 0.65,
+        bh * 0.36,
+        6,
+      );
+      ctx.fill();
+      // Back of sofa
+      ctx.fillStyle = accentWith(0.65);
+      ctx.beginPath();
+      ctx.roundRect(
+        backLeft + bw * 0.05,
+        backTop + bh * 0.38,
+        bw * 0.65,
+        bh * 0.14,
+        4,
+      );
+      ctx.fill();
+      // Cushions
+      ctx.fillStyle = "rgba(255,255,255,0.15)";
+      for (let i = 0; i < 3; i++) {
+        ctx.beginPath();
+        ctx.roundRect(
+          backLeft + bw * (0.1 + i * 0.2),
+          backTop + bh * 0.4,
+          bw * 0.14,
+          bh * 0.1,
+          6,
+        );
+        ctx.fill();
+      }
+      // TV unit
+      if (hasItem("tv-unit")) {
+        ctx.fillStyle = accentWith(0.4);
+        ctx.fillRect(
+          backLeft + bw * 0.25,
+          backTop + bh * 0.55,
+          bw * 0.5,
+          bh * 0.08,
+        );
+        // TV screen
+        ctx.fillStyle = "rgba(10,10,30,0.8)";
+        ctx.fillRect(
+          backLeft + bw * 0.33,
+          backTop + bh * 0.15,
+          bw * 0.34,
+          bh * 0.38,
+        );
+        ctx.fillStyle = "rgba(60,100,200,0.12)";
+        ctx.fillRect(
+          backLeft + bw * 0.34,
+          backTop + bh * 0.16,
+          bw * 0.32,
+          bh * 0.35,
+        );
+      }
+      // Feature wall accent
+      if (hasItem("feature-wall")) {
+        ctx.fillStyle = hexWithAlpha(accent, 0.12);
+        ctx.fillRect(backLeft + bw * 0.3, backTop, bw * 0.4, bh * 0.55);
+      }
+    } else if (roomType === "Washroom") {
+      // Vanity
+      ctx.fillStyle = accentWith(0.5);
+      ctx.fillRect(
+        backLeft + bw * 0.1,
+        backBottom - bh * 0.35,
+        bw * 0.35,
+        bh * 0.35,
+      );
+      // Mirror
+      ctx.fillStyle = "rgba(200,220,255,0.15)";
+      ctx.fillRect(
+        backLeft + bw * 0.1,
+        backTop + bh * 0.1,
+        bw * 0.35,
+        bh * 0.45,
+      );
+      ctx.strokeStyle = accentWith(0.4);
+      ctx.lineWidth = 2;
+      ctx.strokeRect(
+        backLeft + bw * 0.1,
+        backTop + bh * 0.1,
+        bw * 0.35,
+        bh * 0.45,
+      );
+      // Shower
+      if (hasItem("shower-area")) {
+        ctx.fillStyle = "rgba(180,220,255,0.1)";
+        ctx.fillRect(
+          backRight - bw * 0.28,
+          backTop + bh * 0.05,
+          bw * 0.26,
+          bh * 0.75,
+        );
+        ctx.strokeStyle = "rgba(255,255,255,0.15)";
+        ctx.lineWidth = 1;
+        ctx.strokeRect(
+          backRight - bw * 0.28,
+          backTop + bh * 0.05,
+          bw * 0.26,
+          bh * 0.75,
+        );
+      }
+    } else if (roomType === "Kids Room") {
+      // Bed
+      ctx.fillStyle = accentWith(0.5);
+      ctx.beginPath();
+      ctx.roundRect(
+        backLeft + bw * 0.05,
+        backTop + bh * 0.4,
+        bw * 0.55,
+        bh * 0.45,
+        6,
+      );
+      ctx.fill();
+      ctx.fillStyle = accentWith(0.65);
+      ctx.beginPath();
+      ctx.roundRect(
+        backLeft + bw * 0.05,
+        backTop + bh * 0.28,
+        bw * 0.55,
+        bh * 0.14,
+        4,
+      );
+      ctx.fill();
+      // Colourful shelves
+      if (hasItem("storage-shelves")) {
+        ctx.fillStyle = accentWith(0.35);
+        ctx.fillRect(
+          backRight - bw * 0.22,
+          backTop + bh * 0.05,
+          bw * 0.2,
+          bh * 0.6,
+        );
+        // Shelf lines
+        for (let i = 1; i < 4; i++) {
+          ctx.fillStyle = "rgba(255,255,255,0.12)";
+          ctx.fillRect(
+            backRight - bw * 0.22,
+            backTop + bh * (0.05 + i * 0.14),
+            bw * 0.2,
+            bh * 0.025,
+          );
+        }
+      }
+    } else if (roomType === "Study Room") {
+      // Desk
+      ctx.fillStyle = accentWith(0.5);
+      ctx.fillRect(
+        backLeft + bw * 0.1,
+        backBottom - bh * 0.25,
+        bw * 0.55,
+        bh * 0.1,
+      );
+      ctx.fillStyle = accentWith(0.35);
+      ctx.fillRect(
+        backLeft + bw * 0.12,
+        backBottom - bh * 0.15,
+        bw * 0.04,
+        bh * 0.15,
+      );
+      ctx.fillRect(
+        backLeft + bw * 0.58,
+        backBottom - bh * 0.15,
+        bw * 0.04,
+        bh * 0.15,
+      );
+      // Monitor
+      ctx.fillStyle = "rgba(10,10,30,0.8)";
+      ctx.fillRect(
+        backLeft + bw * 0.28,
+        backTop + bh * 0.2,
+        bw * 0.22,
+        bh * 0.35,
+      );
+      ctx.fillStyle = "rgba(60,100,200,0.15)";
+      ctx.fillRect(
+        backLeft + bw * 0.29,
+        backTop + bh * 0.21,
+        bw * 0.2,
+        bh * 0.33,
+      );
+      // Bookshelf
+      if (hasItem("bookshelf")) {
+        ctx.fillStyle = accentWith(0.4);
+        ctx.fillRect(
+          backRight - bw * 0.2,
+          backTop + bh * 0.05,
+          bw * 0.18,
+          bh * 0.7,
+        );
+        // Books
+        const bookColors = [
+          "rgba(180,80,80,0.5)",
+          "rgba(80,100,180,0.5)",
+          "rgba(80,160,80,0.5)",
+          "rgba(180,160,60,0.5)",
+        ];
+        for (let i = 0; i < 3; i++) {
+          for (let j = 0; j < 4; j++) {
+            ctx.fillStyle = bookColors[j % 4];
+            ctx.fillRect(
+              backRight - bw * 0.19 + j * bw * 0.04,
+              backTop + bh * (0.07 + i * 0.2),
+              bw * 0.03,
+              bh * 0.14,
+            );
+          }
+        }
+      }
+    }
+  };
+
+  roomEmojiFurniture();
+
+  // Ambient light on back wall
+  const grad = ctx.createRadialGradient(vx, H * 0.2, 0, vx, H * 0.2, W * 0.4);
+  grad.addColorStop(0, "rgba(255,255,255,0.04)");
+  grad.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = grad;
+  ctx.fillRect(backLeft, backTop, backRight - backLeft, backBottom - backTop);
+
+  // Corner shadow vignette
+  const leftShadow = ctx.createLinearGradient(0, 0, backLeft, 0);
+  leftShadow.addColorStop(0, "rgba(0,0,0,0.22)");
+  leftShadow.addColorStop(1, "rgba(0,0,0,0)");
+  fillPoly(
+    [
+      [0, 0],
+      [backLeft, backTop],
+      [backLeft, backBottom],
+      [0, H],
+    ],
+    "transparent",
+  );
+  ctx.fillStyle = leftShadow;
+  fillPoly(
+    [
+      [0, 0],
+      [backLeft, backTop],
+      [backLeft, backBottom],
+      [0, H],
+    ],
+    leftShadow as unknown as string,
+  );
+
+  const rightShadow = ctx.createLinearGradient(W, 0, backRight, 0);
+  rightShadow.addColorStop(0, "rgba(0,0,0,0.18)");
+  rightShadow.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = rightShadow;
+  fillPoly(
+    [
+      [backRight, backTop],
+      [W, 0],
+      [W, H],
+      [backRight, backBottom],
+    ],
+    rightShadow as unknown as string,
+  );
+
+  // 8. Label badge
+  const badgeText = `${roomType} — ${theme.name}`;
+  ctx.font = "bold 11px system-ui, sans-serif";
+  const metrics = ctx.measureText(badgeText);
+  const bPad = 8;
+  const bX = W / 2 - metrics.width / 2 - bPad;
+  const bY = 10;
+  const bW = metrics.width + bPad * 2;
+  const bH = 22;
+  ctx.fillStyle = "rgba(0,0,0,0.55)";
+  ctx.beginPath();
+  ctx.roundRect(bX, bY, bW, bH, 6);
+  ctx.fill();
+  ctx.fillStyle = "#C9A84C";
+  ctx.fillText(badgeText, W / 2 - metrics.width / 2, bY + 15);
+
+  // 9. Watermark
+  ctx.font = "10px system-ui, sans-serif";
+  ctx.fillStyle = "rgba(255,255,255,0.2)";
+  ctx.fillText("3D Visualization · KDI Interior", W - 168, H - 8);
+}
+
+function shadeColor(hex: string, percent: number): string {
+  const num = Number.parseInt(hex.replace("#", ""), 16);
+  const r = Math.min(255, Math.max(0, (num >> 16) + percent));
+  const g = Math.min(255, Math.max(0, ((num >> 8) & 0xff) + percent));
+  const b = Math.min(255, Math.max(0, (num & 0xff) + percent));
+  return `rgb(${r},${g},${b})`;
+}
+
+function hexWithAlpha(hex: string, alpha: number): string {
+  const num = Number.parseInt(hex.replace("#", ""), 16);
+  const r = (num >> 16) & 0xff;
+  const g = (num >> 8) & 0xff;
+  const b = num & 0xff;
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+/* ============================================================
+   360° ROOM CAMERA COMPONENT
+   ============================================================ */
+
+function RoomCamera360() {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [selectedRoom, setSelectedRoom] = useState<RoomCamera360Type | null>(
+    null,
+  );
+  const [uploadedPhoto, setUploadedPhoto] = useState<string | null>(null);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [isAnalysing, setIsAnalysing] = useState(false);
+  const [analysisProgress, setAnalysisProgress] = useState(0);
+  const [showResult, setShowResult] = useState(false);
+
+  // 3D Design states
+  const [selectedTheme, setSelectedTheme] = useState<string | null>(null);
+  const [is3DGenerating, setIs3DGenerating] = useState(false);
+  const [show3DResult, setShow3DResult] = useState(false);
+  const [gen3DProgress, setGen3DProgress] = useState(0);
+  const [gen3DStep, setGen3DStep] = useState(0);
+
+  const roomConfig = selectedRoom ? ROOM_CAMERA_CONFIG[selectedRoom] : null;
+
+  const handleFile = (file: File) => {
+    if (!file.type.startsWith("image/")) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setUploadedPhoto(e.target?.result as string);
+      setShowResult(false);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleFile(file);
+  };
+
+  const toggleItem = (itemId: string) => {
+    setSelectedItems((prev) =>
+      prev.includes(itemId)
+        ? prev.filter((i) => i !== itemId)
+        : [...prev, itemId],
+    );
+  };
+
+  const handleRoomSelect = (room: RoomCamera360Type) => {
+    setSelectedRoom(room);
+    setSelectedItems([]);
+    setShowResult(false);
+    setUploadedPhoto(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    if (cameraInputRef.current) cameraInputRef.current.value = "";
+  };
+
+  const handleGetEstimate = () => {
+    if (!uploadedPhoto || !selectedRoom || selectedItems.length === 0) return;
+    setIsAnalysing(true);
+    setAnalysisProgress(0);
+    setShowResult(false);
+
+    const interval = setInterval(() => {
+      setAnalysisProgress((prev) => {
+        if (prev >= 92) {
+          clearInterval(interval);
+          return 92;
+        }
+        return prev + Math.random() * 15 + 6;
+      });
+    }, 250);
+
+    setTimeout(() => {
+      clearInterval(interval);
+      setAnalysisProgress(100);
+      setTimeout(() => {
+        setIsAnalysing(false);
+        setShowResult(true);
+      }, 350);
+    }, 2500);
+  };
+
+  const reset = () => {
+    setSelectedRoom(null);
+    setUploadedPhoto(null);
+    setSelectedItems([]);
+    setShowResult(false);
+    setAnalysisProgress(0);
+    setSelectedTheme(null);
+    setShow3DResult(false);
+    setIs3DGenerating(false);
+    setGen3DProgress(0);
+    setGen3DStep(0);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    if (cameraInputRef.current) cameraInputRef.current.value = "";
+  };
+
+  // 3D generation handler
+  const handle3DGenerate = () => {
+    if (!selectedTheme) return;
+    setIs3DGenerating(true);
+    setShow3DResult(false);
+    setGen3DProgress(0);
+    setGen3DStep(0);
+
+    const steps = [
+      "Scanning room dimensions...",
+      `Applying ${DESIGN_THEMES_3D.find((t) => t.id === selectedTheme)?.name ?? ""} style...`,
+      "Generating 3D layout...",
+      "Rendering materials & lighting...",
+    ];
+
+    let currentStep = 0;
+    const stepInterval = setInterval(() => {
+      currentStep = Math.min(currentStep + 1, steps.length - 1);
+      setGen3DStep(currentStep);
+    }, 900);
+
+    const progressInterval = setInterval(() => {
+      setGen3DProgress((prev) => {
+        if (prev >= 90) {
+          clearInterval(progressInterval);
+          return 90;
+        }
+        return prev + Math.random() * 18 + 8;
+      });
+    }, 200);
+
+    setTimeout(() => {
+      clearInterval(stepInterval);
+      clearInterval(progressInterval);
+      setGen3DProgress(100);
+      setGen3DStep(steps.length - 1);
+      setTimeout(() => {
+        setIs3DGenerating(false);
+        setShow3DResult(true);
+      }, 400);
+    }, 3500);
+  };
+
+  // Draw canvas when 3D result shows
+  useEffect(() => {
+    if (!show3DResult || !selectedTheme || !selectedRoom || !roomConfig) return;
+    const theme = DESIGN_THEMES_3D.find((t) => t.id === selectedTheme);
+    if (!theme || !canvasRef.current) return;
+    draw3DRoom(
+      canvasRef.current,
+      theme,
+      selectedRoom,
+      selectedItems,
+      roomConfig,
+    );
+  }, [show3DResult, selectedTheme, selectedRoom, selectedItems, roomConfig]);
+
+  // Compute cost estimate
+  const totalLow = roomConfig ? selectedItems.length * roomConfig.avgLow : 0;
+  const totalHigh = roomConfig ? selectedItems.length * roomConfig.avgHigh : 0;
+
+  const waMsg =
+    selectedRoom && selectedItems.length > 0
+      ? encodeURIComponent(
+          `Hi KDI Interior! I used your 360° Room Camera for my ${selectedRoom}. I need design & estimate for: ${selectedItems.map((id) => roomConfig?.items.find((i) => i.id === id)?.label ?? id).join(", ")}. Please share a quote.`,
+        )
+      : "";
+
+  const canGetEstimate =
+    !!uploadedPhoto && !!selectedRoom && selectedItems.length > 0;
+
+  const step = !selectedRoom ? 0 : !uploadedPhoto ? 1 : 2;
+
+  return (
+    <section
+      id="room-camera"
+      className="py-20 lg:py-28 bg-charcoal-mid relative overflow-hidden"
+    >
+      {/* Background accents */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,oklch(0.78_0.12_75/0.07)_0%,transparent_55%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,oklch(0.78_0.12_75/0.05)_0%,transparent_55%)]" />
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        {/* Section header */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
+        >
+          <span className="inline-flex items-center gap-2 text-gold text-sm font-semibold tracking-[0.3em] uppercase mb-3">
+            <Camera size={14} />
+            360° Room Camera
+          </span>
+          <h2 className="font-display text-4xl sm:text-5xl font-bold text-foreground mb-4">
+            360° Room Camera
+          </h2>
+          <div className="section-divider mx-auto mb-4" />
+          <p className="text-muted-foreground max-w-xl mx-auto leading-relaxed">
+            Capture your space and select what you need — get an instant design
+            plan and estimate based on Delhi NCR rates.
+          </p>
+        </motion.div>
+
+        <div className="max-w-3xl mx-auto">
+          {/* Step indicator */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.5 }}
+            className="flex items-center justify-center gap-0 mb-10 max-w-md mx-auto"
+          >
+            {["Room", "Photo", "Items"].map((label, idx) => (
+              <div key={label} className="flex items-center flex-1">
+                <div className="flex flex-col items-center gap-1.5 flex-1">
+                  <div
+                    className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all duration-300 ${
+                      step > idx
+                        ? "bg-gold border-gold text-charcoal"
+                        : step === idx
+                          ? "border-gold text-gold bg-gold/10"
+                          : "border-border text-muted-foreground bg-background"
+                    }`}
+                  >
+                    {step > idx ? <Check size={16} /> : idx + 1}
+                  </div>
+                  <span
+                    className={`text-xs font-semibold whitespace-nowrap transition-colors ${
+                      step >= idx ? "text-gold" : "text-muted-foreground"
+                    }`}
+                  >
+                    {label}
+                  </span>
+                </div>
+                {idx < 2 && (
+                  <div
+                    className={`h-0.5 flex-1 mx-1 mb-4 rounded transition-all duration-500 ${
+                      step > idx ? "bg-gold" : "bg-border"
+                    }`}
+                  />
+                )}
+              </div>
+            ))}
+          </motion.div>
+
+          <div className="space-y-6">
+            {/* STEP 1: Room Selection */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ duration: 0.5 }}
+              className="bg-card rounded-2xl border border-border p-6"
+            >
+              <div className="flex items-center gap-3 mb-5">
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 flex-shrink-0 ${
+                    selectedRoom
+                      ? "bg-gold border-gold text-charcoal"
+                      : "border-gold text-gold bg-gold/10"
+                  }`}
+                >
+                  {selectedRoom ? <Check size={14} /> : "1"}
+                </div>
+                <h3 className="font-display text-lg font-bold text-foreground">
+                  Select Room Type
+                </h3>
+                {selectedRoom && (
+                  <span className="ml-auto text-xs bg-gold/15 border border-gold/30 text-gold px-2.5 py-1 rounded-full font-semibold">
+                    {ROOM_CAMERA_CONFIG[selectedRoom].emoji} {selectedRoom}
+                  </span>
+                )}
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {ROOM_CAMERA_TYPES.map((room) => {
+                  const config = ROOM_CAMERA_CONFIG[room];
+                  return (
+                    <button
+                      key={room}
+                      type="button"
+                      onClick={() => handleRoomSelect(room)}
+                      className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border-2 text-left font-semibold text-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
+                        selectedRoom === room
+                          ? "border-gold bg-gold/10 text-gold shadow-[0_0_14px_oklch(0.78_0.12_75/0.2)]"
+                          : "border-border text-foreground/80 hover:border-gold/40 bg-background"
+                      }`}
+                    >
+                      <span className="text-xl flex-shrink-0">
+                        {config.emoji}
+                      </span>
+                      <span className="leading-tight">{room}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </motion.div>
+
+            {/* STEP 2: Take/Upload Photo */}
+            <AnimatePresence>
+              {selectedRoom && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.4 }}
+                  className="bg-card rounded-2xl border border-border p-6"
+                >
+                  <div className="flex items-center gap-3 mb-5">
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 flex-shrink-0 ${
+                        uploadedPhoto
+                          ? "bg-gold border-gold text-charcoal"
+                          : "border-gold text-gold bg-gold/10"
+                      }`}
+                    >
+                      {uploadedPhoto ? <Check size={14} /> : "2"}
+                    </div>
+                    <h3 className="font-display text-lg font-bold text-foreground">
+                      Capture Your Space
+                    </h3>
+                  </div>
+
+                  {uploadedPhoto ? (
+                    <div className="relative">
+                      <img
+                        src={uploadedPhoto}
+                        alt="Uploaded room"
+                        className="w-full rounded-xl object-cover max-h-60 border border-border"
+                      />
+                      <div className="absolute inset-0 rounded-xl bg-charcoal/50 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => cameraInputRef.current?.click()}
+                          className="flex items-center gap-2 bg-gold text-charcoal px-4 py-2 rounded-lg font-bold text-sm"
+                        >
+                          <Camera size={15} />
+                          Retake
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setUploadedPhoto(null);
+                            setShowResult(false);
+                            if (fileInputRef.current)
+                              fileInputRef.current.value = "";
+                          }}
+                          className="flex items-center gap-2 border border-white/40 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-white/10 transition-colors"
+                        >
+                          <X size={15} />
+                          Remove
+                        </button>
+                      </div>
+                      <div className="absolute top-3 left-3 bg-gold text-charcoal text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                        <Check size={10} />
+                        Photo Ready
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <button
+                        type="button"
+                        onClick={() => cameraInputRef.current?.click()}
+                        className="flex-1 flex flex-col items-center justify-center gap-3 py-8 border-2 border-dashed border-gold/40 rounded-xl hover:border-gold hover:bg-gold/5 transition-all duration-200 group"
+                      >
+                        <div className="w-14 h-14 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center group-hover:bg-gold/20 transition-colors">
+                          <Camera size={24} className="text-gold" />
+                        </div>
+                        <div className="text-center">
+                          <p className="font-bold text-foreground text-sm">
+                            📷 Take 360° Photo
+                          </p>
+                          <p className="text-muted-foreground text-xs mt-0.5">
+                            Use your camera
+                          </p>
+                        </div>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="flex-1 flex flex-col items-center justify-center gap-3 py-8 border-2 border-dashed border-border rounded-xl hover:border-gold/40 hover:bg-gold/5 transition-all duration-200 group"
+                      >
+                        <div className="w-14 h-14 rounded-full bg-card border border-border flex items-center justify-center group-hover:border-gold/30 transition-colors">
+                          <Upload
+                            size={24}
+                            className="text-muted-foreground group-hover:text-gold transition-colors"
+                          />
+                        </div>
+                        <div className="text-center">
+                          <p className="font-bold text-foreground text-sm">
+                            📂 Upload Photo
+                          </p>
+                          <p className="text-muted-foreground text-xs mt-0.5">
+                            From your device
+                          </p>
+                        </div>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Hidden inputs */}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleFileInput}
+                  />
+                  <input
+                    ref={cameraInputRef}
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    className="hidden"
+                    onChange={handleFileInput}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* STEP 3: Select Items */}
+            <AnimatePresence>
+              {selectedRoom && uploadedPhoto && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.4 }}
+                  className="bg-card rounded-2xl border border-border p-6"
+                >
+                  <div className="flex items-center gap-3 mb-5">
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 flex-shrink-0 ${
+                        selectedItems.length > 0
+                          ? "bg-gold border-gold text-charcoal"
+                          : "border-gold text-gold bg-gold/10"
+                      }`}
+                    >
+                      {selectedItems.length > 0 ? <Check size={14} /> : "3"}
+                    </div>
+                    <h3 className="font-display text-lg font-bold text-foreground">
+                      What do you need?
+                    </h3>
+                    {selectedItems.length > 0 && (
+                      <span className="ml-auto text-xs bg-gold/15 border border-gold/30 text-gold px-2.5 py-1 rounded-full font-semibold">
+                        {selectedItems.length} selected
+                      </span>
+                    )}
+                  </div>
+
+                  <p className="text-muted-foreground text-sm mb-4">
+                    Select all items you want for your{" "}
+                    <strong className="text-foreground">{selectedRoom}</strong>:
+                  </p>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
+                    {roomConfig?.items.map((item) => {
+                      const isSelected = selectedItems.includes(item.id);
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={() => {
+                            toggleItem(item.id);
+                            setShowResult(false);
+                          }}
+                          className={`relative flex items-center gap-2 px-3 py-2.5 rounded-lg border text-left text-sm transition-all duration-200 hover:scale-[1.02] ${
+                            isSelected
+                              ? "border-gold bg-gold/10 text-gold shadow-[0_0_10px_oklch(0.78_0.12_75/0.15)]"
+                              : "border-border text-foreground/75 hover:border-gold/40 bg-background"
+                          }`}
+                        >
+                          {isSelected && (
+                            <div className="absolute top-1.5 right-1.5 w-4 h-4 bg-gold rounded-full flex items-center justify-center flex-shrink-0">
+                              <Check size={9} className="text-charcoal" />
+                            </div>
+                          )}
+                          <span className="font-medium leading-tight pr-3">
+                            {item.label}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {selectedItems.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      transition={{ duration: 0.3 }}
+                      className="mt-4 bg-gold/5 border border-gold/20 rounded-xl p-3 overflow-hidden"
+                    >
+                      <p className="text-xs text-gold/80 font-semibold uppercase tracking-wider mb-1">
+                        Rough Estimate (Delhi NCR)
+                      </p>
+                      <p className="font-display text-xl font-bold text-gold">
+                        {formatINR(totalLow)} – {formatINR(totalHigh)}
+                      </p>
+                      <p className="text-muted-foreground text-[11px] mt-0.5">
+                        {selectedItems.length} item
+                        {selectedItems.length > 1 ? "s" : ""} · ±15% based on
+                        materials & finish
+                      </p>
+                    </motion.div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* CTA: Get Design Estimate */}
+            <AnimatePresence>
+              {canGetEstimate && !showResult && (
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <button
+                    type="button"
+                    onClick={handleGetEstimate}
+                    disabled={isAnalysing}
+                    className="w-full bg-gold text-charcoal font-bold py-4 rounded-xl hover:bg-gold-light transition-all duration-200 shadow-gold hover:-translate-y-0.5 flex items-center justify-center gap-2 text-base disabled:opacity-70 disabled:cursor-not-allowed"
+                  >
+                    {isAnalysing ? (
+                      <>
+                        <Loader2 size={18} className="animate-spin" />
+                        Analysing Your Space...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles size={18} />
+                        Get Design Estimate
+                      </>
+                    )}
+                  </button>
+
+                  {/* Progress bar */}
+                  <AnimatePresence>
+                    {isAnalysing && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="mt-3 overflow-hidden"
+                      >
+                        <div className="bg-card rounded-xl border border-border p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs text-muted-foreground font-medium">
+                              {analysisProgress < 30
+                                ? "Scanning room dimensions..."
+                                : analysisProgress < 60
+                                  ? "Matching design styles..."
+                                  : analysisProgress < 85
+                                    ? "Calculating Delhi NCR rates..."
+                                    : "Preparing your report..."}
+                            </span>
+                            <span className="text-xs font-bold text-gold">
+                              {Math.round(Math.min(analysisProgress, 100))}%
+                            </span>
+                          </div>
+                          <div className="h-2 bg-border rounded-full overflow-hidden">
+                            <motion.div
+                              className="h-full bg-gradient-to-r from-gold/80 to-gold rounded-full"
+                              style={{
+                                width: `${Math.min(analysisProgress, 100)}%`,
+                              }}
+                              transition={{ duration: 0.3 }}
+                            />
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* RESULT PANEL */}
+            <AnimatePresence>
+              {showResult && selectedRoom && roomConfig && (
+                <motion.div
+                  key="result"
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+                  className="bg-card rounded-2xl border border-gold/30 overflow-hidden shadow-[0_8px_40px_oklch(0_0_0/0.4)]"
+                >
+                  {/* Header */}
+                  <div className="bg-gradient-to-r from-gold/15 to-gold/5 border-b border-gold/20 px-5 py-4 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Sparkles size={16} className="text-gold" />
+                      <span className="font-display font-bold text-gold text-sm uppercase tracking-widest">
+                        Design Plan
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs bg-gold/20 border border-gold/30 text-gold px-2.5 py-1 rounded-full font-semibold">
+                        {roomConfig.emoji} {selectedRoom}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-5 space-y-5">
+                    {/* Uploaded photo + summary */}
+                    {uploadedPhoto && (
+                      <div className="flex gap-4 items-start">
+                        <img
+                          src={uploadedPhoto}
+                          alt="Your room"
+                          className="w-20 h-16 object-cover rounded-lg border border-border flex-shrink-0"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1 font-semibold">
+                            Your Space
+                          </p>
+                          <p className="text-foreground font-semibold text-sm">
+                            {selectedRoom} — {selectedItems.length} item
+                            {selectedItems.length > 1 ? "s" : ""} selected
+                          </p>
+                          <p className="text-muted-foreground text-xs mt-1 leading-relaxed">
+                            Premium interior design recommendations by KDI
+                            Interior, Delhi NCR.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Item-by-item design notes */}
+                    <div>
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-3">
+                        Design Plan
+                      </p>
+                      <div className="space-y-2">
+                        {selectedItems.map((itemId, i) => {
+                          const item = roomConfig.items.find(
+                            (it) => it.id === itemId,
+                          );
+                          const note =
+                            ROOM_CAMERA_ITEM_NOTES[itemId] ??
+                            "Premium quality product with professional installation";
+                          return (
+                            <motion.div
+                              key={itemId}
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: i * 0.06 }}
+                              className="flex items-start gap-3 p-3 bg-background rounded-lg border border-border"
+                            >
+                              <div className="w-7 h-7 rounded-md bg-gold/10 border border-gold/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <Check size={12} className="text-gold" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-foreground font-semibold text-sm leading-tight">
+                                  {item?.label}
+                                </p>
+                                <p className="text-muted-foreground text-xs mt-0.5 leading-relaxed">
+                                  {note}
+                                </p>
+                                <p className="text-gold text-xs font-bold mt-1">
+                                  Approx. {formatINR(roomConfig.avgLow)} –{" "}
+                                  {formatINR(roomConfig.avgHigh)}
+                                </p>
+                              </div>
+                            </motion.div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Total estimate */}
+                    <div className="bg-gold/10 border border-gold/30 rounded-xl p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <IndianRupee size={14} className="text-gold" />
+                        <span className="text-[10px] font-bold text-gold uppercase tracking-widest">
+                          Total Estimated Investment
+                        </span>
+                        <span className="ml-auto text-[10px] text-muted-foreground">
+                          Delhi NCR rates
+                        </span>
+                      </div>
+                      <div className="flex items-baseline gap-2">
+                        <p className="font-display text-2xl font-bold text-gold">
+                          {formatINR(totalLow)}
+                        </p>
+                        <span className="text-muted-foreground text-sm">—</span>
+                        <p className="font-display text-2xl font-bold text-gold">
+                          {formatINR(totalHigh)}
+                        </p>
+                      </div>
+                      <p className="text-muted-foreground text-[11px] mt-1">
+                        ±15% based on materials, brand & finish selected
+                      </p>
+                    </div>
+
+                    {/* ── AI 3D DESIGN GENERATOR ── */}
+                    <div className="border-t border-gold/20 pt-5">
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="w-7 h-7 rounded-lg bg-gold/15 border border-gold/25 flex items-center justify-center flex-shrink-0">
+                          <Wand2 size={14} className="text-gold" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-foreground font-display">
+                            Generate AI 3D Design
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Pick a theme to visualise your room in 3D
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Theme cards */}
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 mb-4">
+                        {DESIGN_THEMES_3D.map((theme) => {
+                          const isSelected = selectedTheme === theme.id;
+                          return (
+                            <button
+                              key={theme.id}
+                              type="button"
+                              onClick={() => {
+                                setSelectedTheme(theme.id);
+                                setShow3DResult(false);
+                                setIs3DGenerating(false);
+                              }}
+                              className={`relative flex flex-col items-start gap-1.5 p-3 rounded-xl border-2 text-left transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
+                                isSelected
+                                  ? "border-gold bg-gold/10 shadow-[0_0_16px_oklch(0.78_0.12_75/0.2)]"
+                                  : "border-border bg-background hover:border-gold/30"
+                              }`}
+                            >
+                              {isSelected && (
+                                <div className="absolute top-2 right-2 w-4 h-4 bg-gold rounded-full flex items-center justify-center">
+                                  <Check size={9} className="text-charcoal" />
+                                </div>
+                              )}
+                              <div
+                                className={`w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0 ${isSelected ? "bg-gold text-charcoal" : "bg-gold/10 text-gold"}`}
+                              >
+                                {theme.icon}
+                              </div>
+                              <div>
+                                <p
+                                  className={`text-xs font-bold leading-tight ${isSelected ? "text-gold" : "text-foreground"}`}
+                                >
+                                  {theme.name}
+                                </p>
+                                <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">
+                                  {theme.styleTag}
+                                </p>
+                                <p className="text-[10px] text-gold font-semibold mt-1">
+                                  ₹{theme.minRate}–{theme.maxRate}/sqft
+                                </p>
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {/* Generate button */}
+                      <AnimatePresence>
+                        {selectedTheme && !show3DResult && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="overflow-hidden"
+                          >
+                            <button
+                              type="button"
+                              onClick={handle3DGenerate}
+                              disabled={is3DGenerating}
+                              className="w-full bg-gradient-to-r from-[oklch(0.65_0.14_75)] to-[oklch(0.72_0.14_70)] text-charcoal font-bold py-3.5 rounded-xl hover:brightness-110 transition-all duration-200 shadow-gold hover:-translate-y-0.5 flex items-center justify-center gap-2 text-sm disabled:opacity-70 mb-3"
+                            >
+                              {is3DGenerating ? (
+                                <>
+                                  <Loader2 size={16} className="animate-spin" />
+                                  Generating 3D...
+                                </>
+                              ) : (
+                                <>
+                                  <Sparkles size={16} />✨ Generate 3D Design
+                                </>
+                              )}
+                            </button>
+
+                            {/* 3D generation progress */}
+                            <AnimatePresence>
+                              {is3DGenerating && (
+                                <motion.div
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: "auto" }}
+                                  exit={{ opacity: 0, height: 0 }}
+                                  transition={{ duration: 0.3 }}
+                                  className="overflow-hidden mb-3"
+                                >
+                                  <div className="bg-background border border-border rounded-xl p-4">
+                                    <div className="flex items-center justify-between mb-2">
+                                      <span className="text-xs text-gold font-medium">
+                                        {gen3DStep === 0
+                                          ? "Scanning room dimensions..."
+                                          : gen3DStep === 1
+                                            ? `Applying ${DESIGN_THEMES_3D.find((t) => t.id === selectedTheme)?.name ?? ""} style...`
+                                            : gen3DStep === 2
+                                              ? "Generating 3D layout..."
+                                              : "Rendering materials & lighting..."}
+                                      </span>
+                                      <span className="text-xs font-bold text-gold">
+                                        {Math.round(
+                                          Math.min(gen3DProgress, 100),
+                                        )}
+                                        %
+                                      </span>
+                                    </div>
+                                    <div className="h-1.5 bg-border rounded-full overflow-hidden">
+                                      <motion.div
+                                        className="h-full bg-gradient-to-r from-gold/70 to-gold rounded-full"
+                                        style={{
+                                          width: `${Math.min(gen3DProgress, 100)}%`,
+                                        }}
+                                        transition={{ duration: 0.25 }}
+                                      />
+                                    </div>
+                                    <div className="flex gap-1 mt-2.5">
+                                      {[0, 1, 2, 3].map((i) => (
+                                        <div
+                                          key={i}
+                                          className={`flex-1 h-1 rounded-full transition-all duration-500 ${gen3DStep >= i ? "bg-gold" : "bg-border"}`}
+                                        />
+                                      ))}
+                                    </div>
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+
+                      {/* 3D Result Card */}
+                      <AnimatePresence>
+                        {show3DResult &&
+                          selectedTheme &&
+                          selectedRoom &&
+                          roomConfig &&
+                          (() => {
+                            const theme = DESIGN_THEMES_3D.find(
+                              (t) => t.id === selectedTheme,
+                            );
+                            if (!theme) return null;
+                            const sqft = ROOM_SQFT_ESTIMATE[selectedRoom];
+                            const laborMat = Math.round(
+                              (sqft * (theme.minRate + theme.maxRate)) / 2,
+                            );
+                            const kdiFee = Math.round(laborMat * 0.1);
+                            const gst = Math.round(kdiFee * 0.18);
+                            const totalMin3D = Math.round(
+                              (laborMat + kdiFee + gst) * 0.88,
+                            );
+                            const totalMax3D = Math.round(
+                              (laborMat + kdiFee + gst) * 1.12,
+                            );
+
+                            const wa3DMsg = encodeURIComponent(
+                              `Hi KDI Interior! I used your AI 3D Design tool for my ${selectedRoom} (${theme.name} theme). Items: ${selectedItems.map((id) => roomConfig.items.find((i) => i.id === id)?.label ?? id).join(", ")}. Estimated budget: ${formatINR(totalMin3D)}–${formatINR(totalMax3D)}. Please share a detailed quote!`,
+                            );
+
+                            return (
+                              <motion.div
+                                key="3d-result"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0 }}
+                                transition={{
+                                  duration: 0.5,
+                                  ease: [0.25, 0.1, 0.25, 1],
+                                }}
+                                className="bg-background rounded-xl border border-gold/25 overflow-hidden"
+                              >
+                                {/* Header */}
+                                <div className="bg-gradient-to-r from-gold/12 to-transparent border-b border-gold/20 px-4 py-3 flex items-center gap-2">
+                                  <Box size={14} className="text-gold" />
+                                  <span className="font-display font-bold text-gold text-xs uppercase tracking-widest">
+                                    AI 3D Design — {theme.name}
+                                  </span>
+                                </div>
+
+                                {/* Canvas 3D Room */}
+                                <div className="p-3 pb-2">
+                                  <div className="relative rounded-lg overflow-hidden border border-border">
+                                    <canvas
+                                      ref={canvasRef}
+                                      width={500}
+                                      height={300}
+                                      className="w-full h-auto block"
+                                      style={{ imageRendering: "crisp-edges" }}
+                                    />
+                                  </div>
+                                  <div className="flex items-center gap-2 mt-2 px-1">
+                                    <div className="flex gap-1">
+                                      {Object.entries(theme.palette).map(
+                                        ([key, color]) => (
+                                          <div
+                                            key={key}
+                                            className="w-4 h-4 rounded-sm border border-border/50"
+                                            style={{ backgroundColor: color }}
+                                            title={key}
+                                          />
+                                        ),
+                                      )}
+                                    </div>
+                                    <span className="text-[10px] text-muted-foreground ml-1 flex-1">
+                                      Theme palette
+                                    </span>
+                                    <span className="text-[10px] text-gold font-semibold">
+                                      {theme.styleTag}
+                                    </span>
+                                  </div>
+                                </div>
+
+                                {/* Products Used */}
+                                <div className="px-4 pb-4">
+                                  <div className="flex items-center gap-1.5 mb-2">
+                                    <Package size={12} className="text-gold" />
+                                    <p className="text-[10px] font-bold text-gold uppercase tracking-widest">
+                                      Products Used
+                                    </p>
+                                  </div>
+                                  <div className="grid grid-cols-1 gap-1.5">
+                                    {[
+                                      {
+                                        label: "Wall Paint",
+                                        name: theme.products.paint.brand,
+                                        detail: `${theme.products.paint.shade} · ₹${theme.products.paint.pricePerLitre}/L`,
+                                      },
+                                      {
+                                        label: "Flooring",
+                                        name: theme.products.flooring.brand,
+                                        detail: `${theme.products.flooring.type} · ₹${theme.products.flooring.pricePerSqft}/sqft`,
+                                      },
+                                      {
+                                        label: "False Ceiling",
+                                        name: theme.products.ceiling.brand,
+                                        detail: `₹${theme.products.ceiling.pricePerSqft}/sqft`,
+                                      },
+                                      {
+                                        label: "Hardware",
+                                        name: theme.products.hardware.brand,
+                                        detail: theme.products.hardware.grade,
+                                      },
+                                      ...(theme.products.fabric
+                                        ? [
+                                            {
+                                              label: "Soft Furnishing",
+                                              name: theme.products.fabric.type,
+                                              detail:
+                                                theme.products.fabric.price,
+                                            },
+                                          ]
+                                        : []),
+                                    ].map((p) => (
+                                      <div
+                                        key={p.label}
+                                        className="flex items-start gap-2 py-1.5 border-b border-border/50 last:border-0"
+                                      >
+                                        <div className="flex-1 min-w-0">
+                                          <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                                            {p.label} —{" "}
+                                          </span>
+                                          <span className="text-xs text-foreground font-semibold">
+                                            {p.name}
+                                          </span>
+                                        </div>
+                                        <span className="text-[10px] text-gold font-semibold flex-shrink-0">
+                                          {p.detail}
+                                        </span>
+                                      </div>
+                                    ))}
+                                  </div>
+
+                                  {/* Cost Breakdown */}
+                                  <div className="mt-4 bg-card rounded-xl border border-gold/20 p-3">
+                                    <div className="flex items-center gap-1.5 mb-2">
+                                      <IndianRupee
+                                        size={12}
+                                        className="text-gold"
+                                      />
+                                      <p className="text-[10px] font-bold text-gold uppercase tracking-widest">
+                                        Cost Breakdown
+                                      </p>
+                                      <span className="ml-auto text-[10px] text-muted-foreground">
+                                        {sqft} sq ft
+                                      </span>
+                                    </div>
+                                    <div className="space-y-1.5 mb-3">
+                                      {[
+                                        {
+                                          label: "Labour + Materials",
+                                          value: formatINR(laborMat),
+                                        },
+                                        {
+                                          label: "KDI Service Fee (10%)",
+                                          value: formatINR(kdiFee),
+                                        },
+                                        {
+                                          label: "GST (18% on fee)",
+                                          value: formatINR(gst),
+                                        },
+                                      ].map((row) => (
+                                        <div
+                                          key={row.label}
+                                          className="flex justify-between items-center"
+                                        >
+                                          <span className="text-xs text-muted-foreground">
+                                            {row.label}
+                                          </span>
+                                          <span className="text-xs text-foreground font-semibold">
+                                            {row.value}
+                                          </span>
+                                        </div>
+                                      ))}
+                                    </div>
+                                    <div className="border-t border-gold/20 pt-2">
+                                      <div className="flex items-baseline justify-between">
+                                        <span className="text-xs font-bold text-foreground">
+                                          Total Range
+                                        </span>
+                                        <p className="font-display font-bold text-gold text-base">
+                                          {formatINR(totalMin3D)} –{" "}
+                                          {formatINR(totalMax3D)}
+                                        </p>
+                                      </div>
+                                      <p className="text-[10px] text-muted-foreground mt-0.5">
+                                        ±12% based on site conditions
+                                      </p>
+                                    </div>
+                                  </div>
+
+                                  {/* WhatsApp Share */}
+                                  <a
+                                    href={`https://wa.me/918588830091?text=${wa3DMsg}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="mt-3 w-full flex items-center justify-center gap-2 bg-[#25D366] text-white font-bold py-3 rounded-xl hover:bg-[#20b95a] transition-all duration-200 text-sm shadow-[0_4px_12px_rgba(37,211,102,0.25)]"
+                                  >
+                                    <SiWhatsapp size={15} />
+                                    Share this Design on WhatsApp
+                                  </a>
+
+                                  {/* Regenerate option */}
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setShow3DResult(false);
+                                      setSelectedTheme(null);
+                                    }}
+                                    className="w-full text-muted-foreground hover:text-gold text-xs py-2 transition-colors mt-1"
+                                  >
+                                    ↺ Try a different theme
+                                  </button>
+                                </div>
+                              </motion.div>
+                            );
+                          })()}
+                      </AnimatePresence>
+                    </div>
+
+                    {/* CTAs */}
+                    <div className="flex flex-col gap-2.5">
+                      <a
+                        href={`https://wa.me/918588830091?text=${waMsg}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full flex items-center justify-center gap-2 bg-[#25D366] text-white font-bold py-3.5 rounded-xl hover:bg-[#20b95a] transition-all duration-200 text-sm shadow-[0_4px_16px_rgba(37,211,102,0.3)]"
+                      >
+                        <SiWhatsapp size={16} />
+                        WhatsApp for Quote
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          document
+                            .getElementById("contact")
+                            ?.scrollIntoView({ behavior: "smooth" })
+                        }
+                        className="w-full flex items-center justify-center gap-2 border border-gold/40 text-gold font-semibold py-3 rounded-xl hover:bg-gold/10 transition-all duration-200 text-sm"
+                      >
+                        Book Free Site Visit
+                        <ChevronRight size={16} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={reset}
+                        className="w-full text-muted-foreground hover:text-foreground text-xs py-2 transition-colors"
+                      >
+                        ↩ Start Over
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ============================================================
    APP ROOT
    ============================================================ */
 
@@ -3992,6 +6342,7 @@ export default function App() {
 
       <main>
         <Hero />
+        <Introduction />
         <WhyChooseUs />
         <Services />
         <Projects />
@@ -3999,6 +6350,7 @@ export default function App() {
         <Testimonials />
         <CostCalculator />
         <RoomVisualizer />
+        <RoomCamera360 />
         <About />
         <FAQ />
         <Contact />
