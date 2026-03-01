@@ -1,0 +1,222 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   KDI Interior — Premium Dark Gold Design System
+   Palette: Deep Charcoal + Champagne Gold
+   ============================================================ */
+
+@font-face {
+  font-family: "Playfair Display";
+  src: url("/assets/fonts/PlayfairDisplay-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Cabinet Grotesk";
+  src: url("/assets/fonts/CabinetGrotesk-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Fraunces";
+  src: url("/assets/fonts/Fraunces-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    --radius: 0.375rem;
+
+    /* KDI Dark Theme — Rich charcoal + champagne gold */
+    --background: 0.12 0.005 60;
+    --foreground: 0.94 0.015 85;
+
+    --card: 0.16 0.008 60;
+    --card-foreground: 0.94 0.015 85;
+
+    --popover: 0.18 0.008 60;
+    --popover-foreground: 0.94 0.015 85;
+
+    /* Gold primary */
+    --primary: 0.78 0.12 75;
+    --primary-foreground: 0.12 0.005 60;
+
+    --secondary: 0.20 0.01 60;
+    --secondary-foreground: 0.88 0.02 85;
+
+    --muted: 0.22 0.008 60;
+    --muted-foreground: 0.62 0.02 75;
+
+    --accent: 0.78 0.12 75;
+    --accent-foreground: 0.12 0.005 60;
+
+    --destructive: 0.577 0.245 27.325;
+    --destructive-foreground: 0.985 0 0;
+
+    --border: 0.28 0.01 75;
+    --input: 0.24 0.01 75;
+    --ring: 0.78 0.12 75;
+
+    /* Chart */
+    --chart-1: 0.78 0.12 75;
+    --chart-2: 0.65 0.10 200;
+    --chart-3: 0.55 0.08 120;
+    --chart-4: 0.70 0.15 50;
+    --chart-5: 0.45 0.08 300;
+
+    /* Sidebar */
+    --sidebar: 0.14 0.006 60;
+    --sidebar-foreground: 0.94 0.015 85;
+    --sidebar-primary: 0.78 0.12 75;
+    --sidebar-primary-foreground: 0.12 0.005 60;
+    --sidebar-accent: 0.22 0.008 60;
+    --sidebar-accent-foreground: 0.88 0.02 85;
+    --sidebar-border: 0.28 0.01 75;
+    --sidebar-ring: 0.78 0.12 75;
+
+    /* KDI Custom tokens */
+    --gold: 0.78 0.12 75;
+    --gold-light: 0.88 0.10 80;
+    --gold-deep: 0.62 0.14 68;
+    --charcoal: 0.12 0.005 60;
+    --charcoal-mid: 0.20 0.008 60;
+    --charcoal-light: 0.28 0.01 60;
+    /* Hero accent navy */
+    --navy: 0.18 0.06 230;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Cabinet Grotesk", sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Promote fixed navbar to its own GPU layer to prevent scroll jank */
+  header[style*="translateZ"] {
+    will-change: background-color, box-shadow;
+  }
+
+  /* Smooth scroll performance for all sections */
+  section {
+    transform: translateZ(0);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Playfair Display", serif;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+}
+
+@layer utilities {
+  .text-gold {
+    color: oklch(var(--gold));
+  }
+  .text-gold-light {
+    color: oklch(var(--gold-light));
+  }
+  .bg-gold {
+    background-color: oklch(var(--gold));
+  }
+  .bg-charcoal {
+    background-color: oklch(var(--charcoal));
+  }
+  .bg-charcoal-mid {
+    background-color: oklch(var(--charcoal-mid));
+  }
+  .border-gold {
+    border-color: oklch(var(--gold));
+  }
+  .border-gold\/30 {
+    border-color: oklch(var(--gold) / 0.30);
+  }
+  .border-gold\/20 {
+    border-color: oklch(var(--gold) / 0.20);
+  }
+  .from-gold {
+    --tw-gradient-from: oklch(var(--gold));
+  }
+  .to-gold-deep {
+    --tw-gradient-to: oklch(var(--gold-deep));
+  }
+
+  /* Gold gradient text */
+  .text-gradient-gold {
+    background: linear-gradient(
+      135deg,
+      oklch(var(--gold-light)) 0%,
+      oklch(var(--gold)) 50%,
+      oklch(var(--gold-deep)) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Section divider */
+  .section-divider {
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, oklch(var(--gold)), oklch(var(--gold-deep)));
+    border-radius: 2px;
+  }
+
+  /* Grain overlay for texture */
+  .grain-overlay::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.3;
+  }
+
+  /* WhatsApp pulse animation */
+  @keyframes whatsapp-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5); }
+    50% { box-shadow: 0 0 0 14px rgba(37, 211, 102, 0); }
+  }
+
+  .whatsapp-pulse {
+    animation: whatsapp-pulse 2.5s ease-in-out infinite;
+  }
+
+  /* Gold shimmer on hover */
+  @keyframes shimmer {
+    from { background-position: -200% center; }
+    to { background-position: 200% center; }
+  }
+
+  .shimmer-hover:hover {
+    background: linear-gradient(
+      90deg,
+      oklch(var(--gold-deep)),
+      oklch(var(--gold-light)),
+      oklch(var(--gold-deep))
+    );
+    background-size: 200% auto;
+    animation: shimmer 1.5s linear;
+  }
+}
