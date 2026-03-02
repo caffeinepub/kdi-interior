@@ -60,7 +60,7 @@ import { toast } from "sonner";
 import { useSubmitInquiry } from "./hooks/useQueries";
 
 /* ============================================================
-   KDI Interior & Studio — Single Page Website
+   Aastha Interiors — Single Page Website
    ============================================================ */
 
 const NAV_LINKS = [
@@ -255,7 +255,7 @@ const TESTIMONIALS = [
   {
     name: "Rajesh Sharma",
     location: "Gurgaon",
-    text: "KDI Interior transformed our 3BHK into a dream home. Exceptional quality, stunning design, and on-time delivery. The team was professional throughout.",
+    text: "Aastha Interiors transformed our 3BHK into a dream home. Exceptional quality, stunning design, and on-time delivery. The team was professional throughout.",
     initials: "RS",
   },
   {
@@ -397,14 +397,11 @@ function Navbar() {
             >
               <div className="flex items-center gap-1">
                 <span className="font-display text-2xl sm:text-3xl font-bold text-gold tracking-wider">
-                  KDI
+                  Aastha
                 </span>
                 <div className="flex flex-col ml-1 hidden sm:flex">
                   <span className="text-[10px] font-semibold text-foreground/70 tracking-[0.2em] uppercase leading-none">
-                    Interior
-                  </span>
-                  <span className="text-[10px] font-semibold text-foreground/70 tracking-[0.2em] uppercase leading-none mt-0.5">
-                    &amp; Studio
+                    Interiors
                   </span>
                 </div>
               </div>
@@ -462,13 +459,22 @@ function Navbar() {
                   </AnimatePresence>
                 </div>
               ))}
-              <a
-                href="tel:8588830091"
-                className="flex items-center gap-2 bg-gold text-charcoal px-4 py-2 rounded text-sm font-bold tracking-wide hover:bg-gold-light transition-colors duration-200 whitespace-nowrap ml-3"
-              >
-                <Phone size={14} />
-                8588830091
-              </a>
+              <div className="flex flex-col gap-1 ml-3">
+                <a
+                  href="tel:8588830091"
+                  className="flex items-center gap-2 bg-gold text-charcoal px-4 py-1.5 rounded text-sm font-bold tracking-wide hover:bg-gold-light transition-colors duration-200 whitespace-nowrap"
+                >
+                  <Phone size={14} />
+                  8588830091
+                </a>
+                <a
+                  href="tel:+919891219926"
+                  className="flex items-center gap-2 bg-gold/80 text-charcoal px-4 py-1.5 rounded text-sm font-bold tracking-wide hover:bg-gold transition-colors duration-200 whitespace-nowrap"
+                >
+                  <Phone size={14} />
+                  +91 98912 19926
+                </a>
+              </div>
             </nav>
 
             {/* Mobile menu button */}
@@ -544,13 +550,22 @@ function Navbar() {
                   )}
                 </div>
               ))}
-              <a
-                href="tel:8588830091"
-                className="flex items-center justify-center gap-2 bg-gold text-charcoal px-4 py-3 rounded font-bold text-base mt-3"
-              >
-                <Phone size={16} />
-                Call: 8588830091
-              </a>
+              <div className="flex flex-col gap-2 mt-3">
+                <a
+                  href="tel:8588830091"
+                  className="flex items-center justify-center gap-2 bg-gold text-charcoal px-4 py-3 rounded font-bold text-base"
+                >
+                  <Phone size={16} />
+                  Call: 8588830091
+                </a>
+                <a
+                  href="tel:+919891219926"
+                  className="flex items-center justify-center gap-2 bg-gold/80 text-charcoal px-4 py-3 rounded font-bold text-base"
+                >
+                  <Phone size={16} />
+                  Call: +91 98912 19926
+                </a>
+              </div>
             </nav>
           </motion.div>
         )}
@@ -645,14 +660,24 @@ function Hero() {
             variants={fadeUp}
             className="flex flex-col sm:flex-row items-center gap-4 mt-2"
           >
-            <a
-              href="tel:8588830091"
-              className="flex items-center gap-2 bg-gold text-charcoal px-6 sm:px-8 py-4 rounded font-bold text-sm sm:text-base tracking-wide hover:bg-gold-light transition-all duration-300 shadow-gold hover:shadow-gold-lg hover:-translate-y-0.5"
-            >
-              <Phone size={18} />
-              <span className="sm:hidden">Call Now</span>
-              <span className="hidden sm:inline">Call: 8588830091</span>
-            </a>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <a
+                href="tel:8588830091"
+                className="flex items-center gap-2 bg-gold text-charcoal px-6 sm:px-8 py-4 rounded font-bold text-sm sm:text-base tracking-wide hover:bg-gold-light transition-all duration-300 shadow-gold hover:shadow-gold-lg hover:-translate-y-0.5"
+              >
+                <Phone size={18} />
+                <span className="sm:hidden">Call Now</span>
+                <span className="hidden sm:inline">8588830091</span>
+              </a>
+              <a
+                href="tel:+919891219926"
+                className="flex items-center gap-2 bg-gold/80 text-charcoal px-6 sm:px-8 py-4 rounded font-bold text-sm sm:text-base tracking-wide hover:bg-gold transition-all duration-300 shadow-gold hover:shadow-gold-lg hover:-translate-y-0.5"
+              >
+                <Phone size={18} />
+                <span className="sm:hidden">Call Now</span>
+                <span className="hidden sm:inline">+91 98912 19926</span>
+              </a>
+            </div>
             <button
               type="button"
               onClick={() => scrollTo("contact")}
@@ -753,9 +778,9 @@ function Introduction() {
 
             {/* Body text */}
             <p className="text-muted-foreground leading-relaxed text-base mb-8">
-              KDI Interior &amp; Studio is Delhi NCR's trusted interior design
-              partner. Since 2017, we have transformed over 500 homes, offices,
-              and commercial spaces into environments that are beautiful,
+              Aastha Interiors is Delhi NCR's trusted interior design partner.
+              Since 2017, we have transformed over 500 homes, offices, and
+              commercial spaces into environments that are beautiful,
               functional, and uniquely yours. From modular kitchens to full home
               interiors, we bring your vision to life — on time and within
               budget.
@@ -849,7 +874,7 @@ function WhyChooseUs() {
           className="text-center mb-16"
         >
           <p className="text-gold text-sm font-semibold tracking-[0.3em] uppercase mb-3">
-            Why KDI Interior
+            Why Aastha Interiors
           </p>
           <h2 className="font-display text-4xl sm:text-5xl font-bold text-foreground mb-4">
             Our Promise to You
@@ -1202,8 +1227,7 @@ function About() {
               About Us
             </p>
             <h2 className="font-display text-4xl sm:text-5xl font-bold text-foreground mb-4 leading-tight">
-              KDI Interior{" "}
-              <span className="text-gradient-gold">&amp; Studio</span>
+              Aastha <span className="text-gradient-gold">Interiors</span>
             </h2>
             <div className="section-divider mb-6" />
             <div className="space-y-4 text-muted-foreground leading-relaxed">
@@ -1250,13 +1274,20 @@ function About() {
               ))}
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 mt-8">
+            <div className="flex flex-col sm:flex-row gap-4 mt-8 flex-wrap">
               <a
                 href="tel:8588830091"
                 className="flex items-center justify-center gap-2 bg-gold text-charcoal px-6 py-3 rounded font-bold hover:bg-gold-light transition-colors shadow-gold"
               >
                 <Phone size={16} />
-                Call Us Now
+                8588830091
+              </a>
+              <a
+                href="tel:+919891219926"
+                className="flex items-center justify-center gap-2 bg-gold/80 text-charcoal px-6 py-3 rounded font-bold hover:bg-gold transition-colors shadow-gold"
+              >
+                <Phone size={16} />
+                +91 98912 19926
               </a>
               <a
                 href="https://wa.me/918588830091"
@@ -1281,7 +1312,7 @@ function About() {
             <div className="relative rounded-2xl overflow-hidden aspect-[4/3] shadow-[0_20px_80px_rgba(0,0,0,0.6)]">
               <img
                 src="/assets/generated/hero-living-room.dim_1400x700.jpg"
-                alt="KDI Interior - Premium Design"
+                alt="Aastha Interiors - Premium Design"
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-tr from-charcoal/40 to-transparent" />
@@ -1441,22 +1472,28 @@ function Contact() {
                 Contact Information
               </h3>
               <div className="space-y-5">
-                <a
-                  href="tel:8588830091"
-                  className="flex items-start gap-4 group"
-                >
-                  <div className="w-12 h-12 rounded-lg bg-gold/10 border border-gold/20 flex items-center justify-center group-hover:bg-gold/20 transition-colors flex-shrink-0">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-lg bg-gold/10 border border-gold/20 flex items-center justify-center flex-shrink-0">
                     <Phone size={20} className="text-gold" />
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
                       Phone
                     </p>
-                    <p className="text-foreground font-semibold text-lg group-hover:text-gold transition-colors">
+                    <a
+                      href="tel:8588830091"
+                      className="text-foreground font-semibold text-lg hover:text-gold transition-colors block"
+                    >
                       8588830091
-                    </p>
+                    </a>
+                    <a
+                      href="tel:+919891219926"
+                      className="text-foreground font-semibold text-lg hover:text-gold transition-colors block"
+                    >
+                      +91 98912 19926
+                    </a>
                   </div>
-                </a>
+                </div>
 
                 <a
                   href="mailto:kdiinteriorandstudio@gmail.com"
@@ -1674,8 +1711,8 @@ function Contact() {
                     </Button>
 
                     <p className="text-xs text-muted-foreground text-center">
-                      By submitting, you agree to be contacted by KDI Interior.
-                      We respect your privacy.
+                      By submitting, you agree to be contacted by Aastha
+                      Interiors. We respect your privacy.
                     </p>
                   </motion.form>
                 )}
@@ -1707,14 +1744,11 @@ function Footer() {
           <div className="col-span-1 sm:col-span-2 lg:col-span-1">
             <div className="flex items-center gap-1 mb-4">
               <span className="font-display text-2xl font-bold text-gold tracking-wider">
-                KDI
+                Aastha
               </span>
               <div className="flex flex-col ml-1">
                 <span className="text-[9px] font-semibold text-foreground/60 tracking-[0.2em] uppercase leading-none">
-                  Interior
-                </span>
-                <span className="text-[9px] font-semibold text-foreground/60 tracking-[0.2em] uppercase leading-none mt-0.5">
-                  &amp; Studio
+                  Interiors
                 </span>
               </div>
             </div>
@@ -1813,6 +1847,15 @@ function Footer() {
               </li>
               <li>
                 <a
+                  href="tel:+919891219926"
+                  className="flex items-center gap-2 text-muted-foreground hover:text-gold transition-colors"
+                >
+                  <Phone size={14} className="text-gold flex-shrink-0" />
+                  +91 98912 19926
+                </a>
+              </li>
+              <li>
+                <a
                   href="mailto:kdiinteriorandstudio@gmail.com"
                   className="flex items-start gap-2 text-muted-foreground hover:text-gold transition-colors"
                 >
@@ -1843,7 +1886,7 @@ function Footer() {
             />
           </div>
           <p className="text-sm text-muted-foreground">
-            © 2017 KDI Interior &amp; Studio. All Rights Reserved.
+            © 2017 Aastha Interiors. All Rights Reserved.
           </p>
         </div>
       </div>
@@ -3809,7 +3852,7 @@ function RoomVisualizer() {
   );
 
   const waMsg = encodeURIComponent(
-    `Hi KDI Interior! I used your 3D Visualizer and loved the ${style} + ${selectedColor.name} + ${flooring} design for my ${ROOM_TABS.find((r) => r.id === roomType)?.label}. Please share a quote.`,
+    `Hi Aastha Interiors! I used your 3D Visualizer and loved the ${style} + ${selectedColor.name} + ${flooring} design for my ${ROOM_TABS.find((r) => r.id === roomType)?.label}. Please share a quote.`,
   );
 
   const scrollToContact = () =>
@@ -5190,7 +5233,7 @@ function draw3DRoom(
   // 9. Watermark
   ctx.font = "10px system-ui, sans-serif";
   ctx.fillStyle = "rgba(255,255,255,0.2)";
-  ctx.fillText("3D Visualization · KDI Interior", W - 168, H - 8);
+  ctx.fillText("3D Visualization · Aastha Interiors", W - 168, H - 8);
 }
 
 function shadeColor(hex: string, percent: number): string {
@@ -5372,7 +5415,7 @@ function RoomCamera360() {
   const waMsg =
     selectedRoom && selectedItems.length > 0
       ? encodeURIComponent(
-          `Hi KDI Interior! I used your 360° Room Camera for my ${selectedRoom}. I need design & estimate for: ${selectedItems.map((id) => roomConfig?.items.find((i) => i.id === id)?.label ?? id).join(", ")}. Please share a quote.`,
+          `Hi Aastha Interiors! I used your 360° Room Camera for my ${selectedRoom}. I need design & estimate for: ${selectedItems.map((id) => roomConfig?.items.find((i) => i.id === id)?.label ?? id).join(", ")}. Please share a quote.`,
         )
       : "";
 
@@ -5832,8 +5875,8 @@ function RoomCamera360() {
                             {selectedItems.length > 1 ? "s" : ""} selected
                           </p>
                           <p className="text-muted-foreground text-xs mt-1 leading-relaxed">
-                            Premium interior design recommendations by KDI
-                            Interior, Delhi NCR.
+                            Premium interior design recommendations by Aastha
+                            Interiors, Delhi NCR.
                           </p>
                         </div>
                       </div>
@@ -6075,7 +6118,7 @@ function RoomCamera360() {
                             );
 
                             const wa3DMsg = encodeURIComponent(
-                              `Hi KDI Interior! I used your AI 3D Design tool for my ${selectedRoom} (${theme.name} theme). Items: ${selectedItems.map((id) => roomConfig.items.find((i) => i.id === id)?.label ?? id).join(", ")}. Estimated budget: ${formatINR(totalMin3D)}–${formatINR(totalMax3D)}. Please share a detailed quote!`,
+                              `Hi Aastha Interiors! I used your AI 3D Design tool for my ${selectedRoom} (${theme.name} theme). Items: ${selectedItems.map((id) => roomConfig.items.find((i) => i.id === id)?.label ?? id).join(", ")}. Estimated budget: ${formatINR(totalMin3D)}–${formatINR(totalMax3D)}. Please share a detailed quote!`,
                             );
 
                             return (
@@ -6212,7 +6255,8 @@ function RoomCamera360() {
                                           value: formatINR(laborMat),
                                         },
                                         {
-                                          label: "KDI Service Fee (10%)",
+                                          label:
+                                            "Aastha Interiors Service Fee (10%)",
                                           value: formatINR(kdiFee),
                                         },
                                         {
