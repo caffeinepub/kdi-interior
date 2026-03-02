@@ -395,20 +395,11 @@ function Navbar() {
               onClick={() => scrollTo("#home")}
               className="flex items-center gap-2 focus:outline-none group"
             >
-              <div className="flex items-center gap-1">
-                <span className="font-display text-2xl sm:text-3xl font-bold text-gold tracking-wider">
-                  Aastha
-                </span>
-                <div className="flex flex-col ml-1 hidden sm:flex">
-                  <span className="text-[10px] font-semibold text-foreground/70 tracking-[0.2em] uppercase leading-none">
-                    Interiors
-                  </span>
-                </div>
-              </div>
-              <div className="w-px h-8 bg-gold/30 mx-1 hidden sm:block" />
-              <span className="text-[10px] text-gold/60 font-semibold tracking-[0.15em] uppercase hidden sm:block">
-                Delhi NCR
-              </span>
+              <img
+                src="/assets/generated/aastha-interiors-logo-transparent.dim_400x120.png"
+                alt="Aastha Interiors"
+                className="h-10 sm:h-12 w-auto object-contain"
+              />
             </button>
 
             {/* Desktop nav */}
@@ -461,15 +452,8 @@ function Navbar() {
               ))}
               <div className="flex flex-col gap-1 ml-3">
                 <a
-                  href="tel:8588830091"
-                  className="flex items-center gap-2 bg-gold text-charcoal px-4 py-1.5 rounded text-sm font-bold tracking-wide hover:bg-gold-light transition-colors duration-200 whitespace-nowrap"
-                >
-                  <Phone size={14} />
-                  8588830091
-                </a>
-                <a
                   href="tel:+919891219926"
-                  className="flex items-center gap-2 bg-gold/80 text-charcoal px-4 py-1.5 rounded text-sm font-bold tracking-wide hover:bg-gold transition-colors duration-200 whitespace-nowrap"
+                  className="flex items-center gap-2 bg-gold text-charcoal px-4 py-1.5 rounded text-sm font-bold tracking-wide hover:bg-gold-light transition-colors duration-200 whitespace-nowrap"
                 >
                   <Phone size={14} />
                   +91 98912 19926
@@ -552,15 +536,8 @@ function Navbar() {
               ))}
               <div className="flex flex-col gap-2 mt-3">
                 <a
-                  href="tel:8588830091"
-                  className="flex items-center justify-center gap-2 bg-gold text-charcoal px-4 py-3 rounded font-bold text-base"
-                >
-                  <Phone size={16} />
-                  Call: 8588830091
-                </a>
-                <a
                   href="tel:+919891219926"
-                  className="flex items-center justify-center gap-2 bg-gold/80 text-charcoal px-4 py-3 rounded font-bold text-base"
+                  className="flex items-center justify-center gap-2 bg-gold text-charcoal px-4 py-3 rounded font-bold text-base"
                 >
                   <Phone size={16} />
                   Call: +91 98912 19926
@@ -662,16 +639,8 @@ function Hero() {
           >
             <div className="flex flex-col sm:flex-row gap-2">
               <a
-                href="tel:8588830091"
-                className="flex items-center gap-2 bg-gold text-charcoal px-6 sm:px-8 py-4 rounded font-bold text-sm sm:text-base tracking-wide hover:bg-gold-light transition-all duration-300 shadow-gold hover:shadow-gold-lg hover:-translate-y-0.5"
-              >
-                <Phone size={18} />
-                <span className="sm:hidden">Call Now</span>
-                <span className="hidden sm:inline">8588830091</span>
-              </a>
-              <a
                 href="tel:+919891219926"
-                className="flex items-center gap-2 bg-gold/80 text-charcoal px-6 sm:px-8 py-4 rounded font-bold text-sm sm:text-base tracking-wide hover:bg-gold transition-all duration-300 shadow-gold hover:shadow-gold-lg hover:-translate-y-0.5"
+                className="flex items-center gap-2 bg-gold text-charcoal px-6 sm:px-8 py-4 rounded font-bold text-sm sm:text-base tracking-wide hover:bg-gold-light transition-all duration-300 shadow-gold hover:shadow-gold-lg hover:-translate-y-0.5"
               >
                 <Phone size={18} />
                 <span className="sm:hidden">Call Now</span>
@@ -1276,21 +1245,14 @@ function About() {
 
             <div className="flex flex-col sm:flex-row gap-4 mt-8 flex-wrap">
               <a
-                href="tel:8588830091"
-                className="flex items-center justify-center gap-2 bg-gold text-charcoal px-6 py-3 rounded font-bold hover:bg-gold-light transition-colors shadow-gold"
-              >
-                <Phone size={16} />
-                8588830091
-              </a>
-              <a
                 href="tel:+919891219926"
-                className="flex items-center justify-center gap-2 bg-gold/80 text-charcoal px-6 py-3 rounded font-bold hover:bg-gold transition-colors shadow-gold"
+                className="flex items-center justify-center gap-2 bg-gold text-charcoal px-6 py-3 rounded font-bold hover:bg-gold-light transition-colors shadow-gold"
               >
                 <Phone size={16} />
                 +91 98912 19926
               </a>
               <a
-                href="https://wa.me/918588830091"
+                href="https://wa.me/919891219926"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 border border-gold/40 text-gold px-6 py-3 rounded font-semibold hover:bg-gold/10 transition-colors"
@@ -1481,12 +1443,6 @@ function Contact() {
                       Phone
                     </p>
                     <a
-                      href="tel:8588830091"
-                      className="text-foreground font-semibold text-lg hover:text-gold transition-colors block"
-                    >
-                      8588830091
-                    </a>
-                    <a
                       href="tel:+919891219926"
                       className="text-foreground font-semibold text-lg hover:text-gold transition-colors block"
                     >
@@ -1496,7 +1452,7 @@ function Contact() {
                 </div>
 
                 <a
-                  href="mailto:kdiinteriorandstudio@gmail.com"
+                  href="mailto:help@aasthainteriors.com"
                   className="flex items-start gap-4 group"
                 >
                   <div className="w-12 h-12 rounded-lg bg-gold/10 border border-gold/20 flex items-center justify-center group-hover:bg-gold/20 transition-colors flex-shrink-0">
@@ -1507,7 +1463,7 @@ function Contact() {
                       Email
                     </p>
                     <p className="text-foreground font-semibold group-hover:text-gold transition-colors break-all">
-                      kdiinteriorandstudio@gmail.com
+                      help@aasthainteriors.com
                     </p>
                   </div>
                 </a>
@@ -1531,7 +1487,7 @@ function Contact() {
 
             {/* WhatsApp CTA */}
             <a
-              href="https://wa.me/918588830091"
+              href="https://wa.me/919891219926"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-3 bg-[#25D366]/10 border border-[#25D366]/30 text-[#25D366] px-6 py-4 rounded-xl hover:bg-[#25D366]/20 transition-all duration-300 font-semibold group"
@@ -1742,15 +1698,12 @@ function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="col-span-1 sm:col-span-2 lg:col-span-1">
-            <div className="flex items-center gap-1 mb-4">
-              <span className="font-display text-2xl font-bold text-gold tracking-wider">
-                Aastha
-              </span>
-              <div className="flex flex-col ml-1">
-                <span className="text-[9px] font-semibold text-foreground/60 tracking-[0.2em] uppercase leading-none">
-                  Interiors
-                </span>
-              </div>
+            <div className="mb-4">
+              <img
+                src="/assets/generated/aastha-interiors-logo-transparent.dim_400x120.png"
+                alt="Aastha Interiors"
+                className="h-10 w-auto object-contain"
+              />
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed mb-5">
               Premium interior design studio serving Delhi NCR since 2017.
@@ -1777,7 +1730,7 @@ function Footer() {
                 <Facebook size={16} />
               </a>
               <a
-                href="https://wa.me/918588830091"
+                href="https://wa.me/919891219926"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"
@@ -1838,15 +1791,6 @@ function Footer() {
             <ul className="space-y-3 text-sm">
               <li>
                 <a
-                  href="tel:8588830091"
-                  className="flex items-center gap-2 text-muted-foreground hover:text-gold transition-colors"
-                >
-                  <Phone size={14} className="text-gold flex-shrink-0" />
-                  8588830091
-                </a>
-              </li>
-              <li>
-                <a
                   href="tel:+919891219926"
                   className="flex items-center gap-2 text-muted-foreground hover:text-gold transition-colors"
                 >
@@ -1856,13 +1800,11 @@ function Footer() {
               </li>
               <li>
                 <a
-                  href="mailto:kdiinteriorandstudio@gmail.com"
+                  href="mailto:help@aasthainteriors.com"
                   className="flex items-start gap-2 text-muted-foreground hover:text-gold transition-colors"
                 >
                   <Mail size={14} className="text-gold flex-shrink-0 mt-0.5" />
-                  <span className="break-all">
-                    kdiinteriorandstudio@gmail.com
-                  </span>
+                  <span className="break-all">help@aasthainteriors.com</span>
                 </a>
               </li>
               <li className="flex items-center gap-2 text-muted-foreground">
@@ -1901,7 +1843,7 @@ function Footer() {
 function FloatingWhatsApp() {
   return (
     <a
-      href="https://wa.me/918588830091"
+      href="https://wa.me/919891219926"
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat on WhatsApp"
@@ -2693,7 +2635,7 @@ function CostCalculator() {
                 <ChevronRight size={16} />
               </button>
               <a
-                href="https://wa.me/918588830091"
+                href="https://wa.me/919891219926"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full flex items-center justify-center gap-2 border border-[#25D366]/40 text-[#25D366] font-semibold py-3 rounded-xl hover:bg-[#25D366]/8 transition-all duration-200 text-sm"
@@ -4302,7 +4244,7 @@ function RoomVisualizer() {
                   <ChevronRight size={13} />
                 </button>
                 <a
-                  href={`https://wa.me/918588830091?text=${waMsg}`}
+                  href={`https://wa.me/919891219926?text=${waMsg}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full flex items-center justify-center gap-1.5 border border-[#25D366]/40 text-[#25D366] font-semibold py-2 rounded-lg hover:bg-[#25D366]/8 transition-all duration-200 text-xs"
@@ -6295,7 +6237,7 @@ function RoomCamera360() {
 
                                   {/* WhatsApp Share */}
                                   <a
-                                    href={`https://wa.me/918588830091?text=${wa3DMsg}`}
+                                    href={`https://wa.me/919891219926?text=${wa3DMsg}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="mt-3 w-full flex items-center justify-center gap-2 bg-[#25D366] text-white font-bold py-3 rounded-xl hover:bg-[#20b95a] transition-all duration-200 text-sm shadow-[0_4px_12px_rgba(37,211,102,0.25)]"
@@ -6325,7 +6267,7 @@ function RoomCamera360() {
                     {/* CTAs */}
                     <div className="flex flex-col gap-2.5">
                       <a
-                        href={`https://wa.me/918588830091?text=${waMsg}`}
+                        href={`https://wa.me/919891219926?text=${waMsg}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-full flex items-center justify-center gap-2 bg-[#25D366] text-white font-bold py-3.5 rounded-xl hover:bg-[#20b95a] transition-all duration-200 text-sm shadow-[0_4px_16px_rgba(37,211,102,0.3)]"
